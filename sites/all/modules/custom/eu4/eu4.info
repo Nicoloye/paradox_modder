@@ -1,0 +1,5 @@
+name = EU4 - Commons
+description = Provides all commons for EU4.
+core = 7.x
+version = 7.x-1.0
+package = EU4

@@ -1,0 +1,80 @@
+<?php
+
+/**
+ * Add Factions.
+ */
+ /*
+function default_contents_update_7001(&$sandbox) {
+  // Save needed terms.
+  $term1 = _default_contents_prepare_term('factions');
+  $term1->name = 'Celestial Empire Factions';
+  taxonomy_term_save($term1);
+  
+  $term2 = _default_contents_prepare_term('factions');
+  $term2->name = 'Merchant Republic Factions';
+  taxonomy_term_save($term2);
+  
+  // Save contents.
+  $node = _default_contents_prepare_node('faction');
+  $node->title = 'temples';
+  $node->field_faction_category['und'][]['tid'] = $term1->tid;
+  $node->field_monarch_power['und'][]['value'] = 'MIL';
+  $node->field_land_forcelimit_modifier['und'][]['value'] = 0.25;
+  $node->field_manpower_recovery_speed['und'][]['value'] = 0.25;
+  $node->field_unjustified_demands['und'][]['value'] = -0.25;
+  $node->field_discipline['und'][]['value'] = 0.1;
+  $node->field_war_exhaustion['und'][]['value'] = -0.05;
+  _default_contents_save_node($node);
+  
+  $node = _default_contents_prepare_node('faction');
+  $node->title = 'enuchs';
+  $node->field_faction_category['und'][]['tid'] = $term1->tid;
+  $node->field_monarch_power['und'][]['value'] = 'DIP';
+  $node->field_global_trade_power['und'][]['value'] = 0.25;
+  $node->field_diplomatic_upkeep['und'][]['value'] = 2;
+  $node->field_global_trade_income_modif['und'][]['value'] = 0.25;
+  $node->field_advisor_cost['und'][]['value'] = -0.5;
+  $node->field_diplomatic_reputation['und'][]['value'] = 1;
+  _default_contents_save_node($node);
+  
+  $node = _default_contents_prepare_node('faction');
+  $node->title = 'bureaucrats';
+  $node->field_faction_category['und'][]['tid'] = $term1->tid;
+  $node->field_monarch_power['und'][]['value'] = 'ADM';
+  $node->field_build_cost['und'][]['value'] = -0.5;
+  $node->field_global_tax_modifier['und'][]['value'] = 0.25;
+  $node->field_advisor_pool['und'][]['value'] = 1;
+  $node->field_heir_chance['und'][]['value'] = 0.25;
+  $node->field_religious_unity['und'][]['value'] = 0.25;
+  _default_contents_save_node($node);
+  
+  
+  $node = _default_contents_prepare_node('faction');
+  $node->title = 'mr_aristocrats';
+  $node->field_faction_category['und'][]['tid'] = $term2->tid;
+  $node->field_monarch_power['und'][]['value'] = 'MIL';
+  $node->field_land_morale['und'][]['value'] = 0.10;
+  $node->field_land_maintenance_modifier['und'][]['value'] = -0.10;
+  $node->field_global_foreign_trade_power['und'][]['value'] = -0.15;
+  _default_contents_save_node($node);
+  
+  $node = _default_contents_prepare_node('faction');
+  $node->title = 'mr_traders';
+  $node->field_faction_category['und'][]['tid'] = $term2->tid;
+  $node->field_monarch_power['und'][]['value'] = 'DIP';
+  $node->field_global_trade_power['und'][]['value'] = 0.10;
+  $node->field_naval_maintenance_modifier['und'][]['value'] = -0.10;
+  $node->field_global_tax_modifier['und'][]['value'] = -0.05;
+  _default_contents_save_node($node);
+  
+  $node = _default_contents_prepare_node('faction');
+  $node->title = 'mr_guilds';
+  $node->field_faction_category['und'][]['tid'] = $term2->tid;
+  $node->field_monarch_power['und'][]['value'] = 'ADM';
+  $node->field_global_trade_goods_size['und'][]['value'] = 0.10;
+  $node->field_build_cost['und'][]['value'] = -0.1;
+  $node->field_global_manpower_modifier['und'][]['value'] = -0.10;
+  _default_contents_save_node($node);
+  
+  
+}*/

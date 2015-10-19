@@ -1,0 +1,5 @@
+name = Default contents
+description = Provides custom behaviors to deploy EU4 default contents.
+core = 7.x
+version = 7.x-1.0
+package = Mod Tool

@@ -1,0 +1,464 @@
+<?php
+define('EU4_GAME_FOLDER', variable_get('eu4_game_folder', ''));
+
+/**
+ * @file
+ * Provides common custom behaviors for EU4.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function eu4_menu() {
+  $items ['admin/config/eu4'] = array(
+    'title' => 'EU4 settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_eu4_settings_form', 1),
+    'access arguments' => array('access content'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 90,
+  );
+  $items ['admin/content/eu4'] = array(
+    'title' => 'EU4 build',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_eu4_contents_form', 1),
+    'access arguments' => array('access content'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 90,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function eu4_field_formatter_info() {
+  return array(
+    'eu4_simple_field' => array(
+      'label' => t('EU4 simple field'),
+      'field types' => array('title', 'text', 'text_long', 'number_float', 'number_integer', 'list_text', 'list_boolean'),
+      'settings'  => array(
+        'cascade' => FALSE,
+        'force_embed' => FALSE,
+        'add_line' => FALSE,
+        'prefix' => '',
+      ),
+    ),
+    'eu4_entity_title' => array(
+      'label' => t('EU4 entity title'),
+      'field types' => array('entityreference'),
+      'settings'  => array(
+        'cascade' => FALSE,
+        'force_embed' => FALSE,
+        'add_line' => FALSE,
+        'prefix' => '',
+      ),
+    ),
+    'eu4_entity_code' => array(
+      'label' => t('EU4 entity code'),
+      'field types' => array('entityreference'),
+      'settings'  => array(
+        'cascade' => FALSE,
+        'force_embed' => FALSE,
+        'add_line' => FALSE,
+        'prefix' => '',
+      ),
+    ),
+    'eu4_entity_code_title' => array(
+      'label' => t('EU4 entity code with title in comment'),
+      'field types' => array('entityreference'),
+      'settings'  => array(
+        'cascade' => FALSE,
+        'force_embed' => FALSE,
+        'add_line' => FALSE,
+        'prefix' => '',
+      ),
+    ),
+    'eu4_color_rgb' => array(
+      'label' => t('EU4 RGB color'),
+      'field types' => array('jquery_colorpicker'),
+      'settings'  => array(
+        'cascade' => FALSE,
+        'force_embed' => FALSE,
+        'add_line' => FALSE,
+        'prefix' => '',
+      ),
+    ),
+    'eu4_fc_simple' => array(
+      'label' => t('EU4 simple field collection'),
+      'field types' => array('field_collection'),
+      'settings'  => array(
+        'cascade' => FALSE,
+        'force_embed' => FALSE,
+        'add_line' => FALSE,
+        'prefix' => '',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_settings_form().
+ */
+function eu4_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+  
+  $element = array();
+  $element['cascade'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Cascade for multiple values'),
+    '#description' => t('Checking this will remove brackets on multiple values and add a new variable declaration for each value.'),
+    '#default_value'  => $settings['cascade'],
+  );
+  $element['force_embed'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Force embedding on single value'),
+    '#description' => t('Checking this will add brackets on single value.'),
+    '#default_value'  => $settings['force_embed'],
+  );
+  $element['add_line'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Additional line'),
+    '#description' => t('Checking this will add a new line after this field output.'),
+    '#default_value'  => $settings['add_line'],
+  );
+  $element['prefix'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Prefix'),
+    '#description' => t('Additional string to be displayed before the output.'),
+    '#default_value'  => $settings['prefix'],
+  );
+  return $element;
+}
+
+
+
+/**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function eu4_field_formatter_settings_summary($field, $instance, $view_mode) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+  $summary = ' ';
+  
+  if ($settings['cascade']) {
+    $summary = t('Cascade.');
+  }
+  if ($settings['force_embed']) {
+    $summary = t('Force embed.');
+  }
+  if ($settings['add_line']) {
+    $summary = t('Additional line.');
+  }
+  if ($settings['prefix']) {
+    $summary = t('Prefix set to "!prefix".', array('!prefix' => $settings['prefix']));
+  }
+  
+  return $summary;
+}
+
+
+
+/**
+ * Implements hook_field_formatter_prepare_view().
+ */
+function eu4_field_formatter_prepare_view($entity_type, $entities, $field, $instances, $langcode, &$items, $displays) {
+  //watchdog('debug', print_r($items, TRUE));
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+  $settings = $display['settings'];
+  
+  // Prepare the output with generic things.
+  $cascade = $settings['cascade'];
+  $force_embed = $settings['force_embed'];
+  $add_line = $settings['add_line'];
+  $prefix = $settings['prefix'];
+  $variable = str_replace(' ', '_', strtolower($instance['label']));
+  $output = '';
+  $values = array();
+  
+  switch ($display['type']) {
+    // Simple fields.
+    case 'eu4_simple_field':    
+      foreach ($items as $delta => $item) {
+        $values[$delta] = $items[$delta]['value'];
+      }
+      break;
+    // Entity reference fields.
+    case 'eu4_entity_title':
+      foreach ($items as $delta => $item) {
+        // If entity is not already loaded we load it.
+        if (empty($items[$delta]['entity'])) {
+          $entity = entity_load($field['settings']['target_type'], array($items[$delta]['target_id']));
+          $items[$delta]['entity'] = $entity[$items[$delta]['target_id']];
+        }
+        $values[$delta] = $items[$delta]['entity']->title;
+      }
+      break;
+    case 'eu4_entity_code':
+      foreach ($items as $delta => $item) {
+        // If entity is not already loaded we load it.
+        if (empty($items[$delta]['entity'])) {
+          $entity = entity_load($field['settings']['target_type'], array($items[$delta]['target_id']));
+          $items[$delta]['entity'] = $entity[$items[$delta]['target_id']];
+        }
+        $values[$delta] = $items[$delta]['entity']->field_code[LANGUAGE_NONE][0]['value'];
+      }
+      break;
+    case 'eu4_entity_code_title':
+      foreach ($items as $delta => $item) {
+        // If entity is not already loaded we load it.
+        if (empty($items[$delta]['entity'])) {
+          $entity = entity_load($field['settings']['target_type'], array($items[$delta]['target_id']));
+          $items[$delta]['entity'] = $entity[$items[$delta]['target_id']];
+        }
+        $values[$delta] = $items[$delta]['entity']->field_code[LANGUAGE_NONE][0]['value'] . ' # ' . $items[$delta]['entity']->title;
+      }
+      break;
+    // Color fields.
+    case 'eu4_color_rgb':
+      foreach ($items as $delta => $item) {
+        $color = _eu4_hex2rgb($items[$delta]['jquery_colorpicker']);
+        $color = implode('  ', $color);
+        $color = '{ ' . $color . ' }';
+        $values[$delta] = $color;
+      }
+      break;
+    // Field collection fields.
+    case 'eu4_fc_simple':
+      foreach ($items as $delta => $item) {
+        $fc = entity_load('field_collection_item', array($item['value']));
+        $fc_content = $fc[$item['value']]->view('eu4');
+        
+        $values[$delta] = render($fc_content);
+      }
+      break;
+  }
+  
+  // Multiple valued field.
+  if (!$cascade) {
+    $output = $variable . ' = ';
+    if (count($values) > 1 || $force_embed) {
+      $output .= '{' . "\r\n";
+    }
+  }
+  
+  // Build the output.
+  foreach ($values as $delta => $value) {
+    if ($cascade && !$force_embed) {
+      $output .= $variable . ' = ';
+    }
+    elseif (count($values) > 1 || $force_embed) {
+      $output .= chr(9);
+    }
+    $output .= $value . "\r\n";
+  }
+  
+  if ((count($values) > 1 && !$cascade) || $force_embed) {
+    $output .= '}' . "\r\n\r\n";
+  }
+  
+  // Add an additional new line if required.
+  if ($add_line) {
+    $output .= "\r\n";
+  }
+  
+  $element[] = array('#markup' => $prefix . $output);
+  
+  return $element;
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function eu4_preprocess(&$variables, $hook) {
+  if (array_key_exists($hook, entity_get_info()) || $hook == 'entity') {
+    $entity_type = $variables['elements']['#entity_type'];
+    $bundle = $variables['elements']['#bundle'];
+    $view_mode = $variables['elements']['#view_mode'];
+    $variables['theme_hook_suggestions'][] = $entity_type . '__' . $view_mode;
+    $variables['theme_hook_suggestions'][] = $entity_type . '__' . $bundle;
+    $variables['theme_hook_suggestions'][] = $entity_type . '__' . $bundle . '__' . $view_mode;
+  }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function eu4_theme_registry_alter(&$theme_registry) {
+    // Defined path to the current module.
+    $module_path = drupal_get_path('module', 'eu4');
+    
+    // Find all .tpl.php files in this module's folder recursively.
+    $template_file_objects = drupal_find_theme_templates($theme_registry, '.tpl.php', $module_path .'/templates');
+    // Iterate through all found template file objects.
+    foreach ($template_file_objects as $key => $template_file_object) {
+      // If the template has not already been overridden by a theme.
+      if (!isset($theme_registry[$key]['theme path']) || !preg_match('#/themes/#', $theme_registry[$key]['theme path'])) {
+        // Alter the theme path and template elements.
+        $theme_registry[$key]['theme path'] = $module_path;
+        $theme_registry[$key] = array_merge($theme_registry[$key], $template_file_object);
+        $theme_registry[$key]['type'] = 'module';
+      }
+    }
+    
+    // Override field template, as field wrapper default one add some spaces.
+    $theme_registry['field']['template'] = '/field';
+    unset($theme_registry['field']['function']);
+}
+
+/**
+ * Helper function to help displaying lua script better on screen.
+ */
+function _eu4_clean_lua($string) {
+  $string = str_replace(chr(9), '&nbsp;&nbsp;', render($string));
+  $string = nl2br($string);
+  return $string;
+}
+
+/**
+ * Helper function to convert hex colors to rgb.
+ */
+function _eu4_hex2rgb($hex) {
+   $hex = str_replace("#", "", $hex);
+
+   if(strlen($hex) == 3) {
+      $r = hexdec(substr($hex,0,1).substr($hex,0,1));
+      $g = hexdec(substr($hex,1,1).substr($hex,1,1));
+      $b = hexdec(substr($hex,2,1).substr($hex,2,1));
+   } else {
+      $r = hexdec(substr($hex,0,2));
+      $g = hexdec(substr($hex,2,2));
+      $b = hexdec(substr($hex,4,2));
+   }
+   $rgb = array($r, $g, $b);
+   
+   return $rgb;
+}
+
+/**
+ * Helper function to render node view mode.
+ */
+function _eu4_get_content($node, $view_mode) {
+  $node_view = node_view($node, $view_mode);
+  $content = render($node_view);
+  return $content;
+}
+
+/**
+ * Helper function to build full files based on a specific node view mode.
+ */
+function _eu4_build_single_file($node, $view_mode, $path, $append = FALSE, $content = null) {
+  // If no content is set, assume we have to build it.
+  if (empty($content)) {
+    $content = _eu4_get_content($node, $view_mode);
+  }
+  
+  // Retrieve mod data and get the right folder.
+  $mod_id = $node->field_mod[LANGUAGE_NONE][0]['target_id'];
+  $mod = node_load($mod_id);
+  if (empty($mod->field_mod_folder[LANGUAGE_NONE][0]['value'])) {
+    $folder = EU4_GAME_FOLDER . '\mod\\' . str_replace(' ', '_', strtolower($mod->title));
+  }
+  else {
+    $folder = $mod->field_mod_folder[LANGUAGE_NONE][0]['value'];
+  }
+  
+  // If the directories don't exist, we create them.
+  $filepath = explode('\\', $folder . $path);
+  $file = array_pop($filepath);
+  $filepath = implode('/', $filepath);
+  if (!is_dir($filepath)) {
+    mkdir($filepath, 0777, TRUE);
+  }
+    
+  // Append content to the current one if required.
+  if ($append) {
+    return file_put_contents($folder . $path, $content, FILE_APPEND);
+  }
+  else {
+    // Build the file.
+    return file_put_contents($folder . $path, $content);
+  }
+}
+
+/**
+ * Helper function to retrieve the original content of a given file.
+ */
+function _eu4_get_original($path) {
+  return file_get_contents(EU4_GAME_FOLDER . $path);
+}
+
+/**
+ * Admin settings form.
+ */
+function _eu4_settings_form($form, &$form_state){
+  $form = array();
+
+  // New element.
+  $form['eu4_game_folder'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Game folder'),
+    '#default_value' => variable_get('eu4_game_folder', ''),
+  );
+  
+  return system_settings_form($form);
+}
+
+/**
+ * Contents generation form
+ */
+function _eu4_contents_form($form, &$form_state) {
+  $form = array();
+
+  $query = db_select('node', 'n');
+  $query->fields('n', array('nid', 'title'));
+  $query->condition('n.type', 'mod');
+  $query->orderBy('n.title', 'ASC');
+  $options = $query->execute()->fetchAllKeyed();
+  
+  $form['mod'] = array(
+    '#type' => 'select',
+    '#title' => t('Mod'),
+    '#options' => $options,
+    '#disabled' => TRUE,
+    '#weight' => -1,
+  );
+  
+  $form['eu4_contents'] = array(
+    '#type' => 'vertical_tabs',
+    '#weight' => 0,
+  );
+  $form['eu4_contents']['no_content'] = array(
+    '#markup' => t('No content to build for now.'),
+    '#group' => 'eu4_contents',
+  );
+  
+  $form['actions'] = array(
+    '#type' => 'actions',
+    '#weight' => 99,
+  );
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Build mod'),
+    '#disabled' => TRUE,
+  );
+  
+  return $form;
+}
+
+/**
+ * Helper function to prepare form for contents creation.
+ */
+function _eu4_contents_prepare_form(&$form) {
+  unset($form['eu4_contents']['no_content']);
+  $form['mod']['#disabled'] = FALSE;
+  $form['actions']['submit']['#disabled'] = FALSE;
+}

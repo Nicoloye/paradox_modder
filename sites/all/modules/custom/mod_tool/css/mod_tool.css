@@ -1,0 +1,48 @@
+map {
+  display: block;
+  height: 690px;
+  overflow: scroll;
+  width: 690px;
+}
+
+svg {
+  fill: #fff;
+  stroke: #999;
+  stroke-width: 3px;
+  border: 1px #999 solid;
+}
+
+svg path {
+  stroke: #999;
+  stroke-width: 3px;
+  fill: #ccc;
+  fill-opacity: 0.5;
+}
+
+svg g:hover path{
+  fill: #eee;
+}
+
+/**
+ * Admin CSS
+ */
+/* Radio buttons */
+body.page-node-add .ds-2col .form-wrapper,
+body.page-node-add .ds-2col .form-item {
+  margin-right: 10px;
+}
+
+body.page-node-add .ds-2col .field-widget-options-buttons,
+body.page-node-add .ds-2col .field-widget-number {
+  width: 30%;
+  padding-right: 10px;
+  display: inline-block;
+  vertical-align: top;
+}
+body.page-node-add .ds-2col .field-widget-options-buttons .form-radios div {
+  float: left;
+  padding-right: 10px;
+}
+body.page-node-add .ds-2col .field-widget-options-buttons .description {
+  clear: both;
+}

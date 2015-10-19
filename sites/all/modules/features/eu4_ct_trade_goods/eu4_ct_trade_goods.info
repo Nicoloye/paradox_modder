@@ -1,0 +1,11 @@
+name = Trade goods
+core = 7.x
+package = EU4 - Entities
+version = 7.x-1.0
+dependencies[] = features
+dependencies[] = text
+features[features_api][] = api:2
+features[field_instance][] = node-trade_good-body
+features[node][] = trade_good
+features_exclude[field_base][body] = body
+project path = sites/all/modules/features

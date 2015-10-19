@@ -1,0 +1,422 @@
+<?php
+
+/**
+ * @file
+ * Provides custom behavior for Mod Tool.
+ */
+ 
+ /**
+  * Implements hook_menu().
+  */
+function mod_tool_menu() {
+  $items ['node/%node/definition'] = array(
+    'title' => 'Definition',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('mod_tool_definition_form', 1),
+    'access arguments' => array('access content'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 90,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function mod_tool_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'mod_node_form' && arg(2) == 'edit') {
+    if(!isset($form['#entity']->field_provinces_svg[LANGUAGE_NONE])) {
+      $value = 'Build';
+      unset($form['field_provinces_colors']);
+      unset($form['field_provinces_svg']);
+    } else {
+      $value = 'Rebuild';
+    }
+    $form['actions']['build_svg'] = array(
+      '#access' => 1,
+      '#type' => 'submit',
+      '#value' => t($value . ' SVG map'),
+      '#submit' => array(
+        'mod_tool_build_svg',
+      ),
+    );
+  }
+}
+
+/**
+ * Custom function to process PNG map, get the color index and launch the batch process.
+ */
+function mod_tool_build_svg(&$form, &$form_state) {
+  // Get the source image path.
+  $node = $form_state['node'];
+  $source_image = file_create_url($node->field_provinces_map[LANGUAGE_NONE][0]['uri']);
+  
+  // Get image size
+  $size = getimagesize($source_image);
+  $w = $size[0];
+  $h = $size[1];
+  
+  // Build the color index and store it.
+  $index = array();
+  $index['width'] = $w;
+  $index['height'] = $h;
+  
+  // External: Image Magick
+  // Get all unique colors from the image and store them in the index.
+  $output = array();
+  exec('convert '. $source_image .' -define histogram:unique-colors=true -format %c histogram:info:-', $output);
+  foreach($output as $key => $data) {
+    $output[$key] = trim($data);
+    $output[$key] = str_replace(':', '', $output[$key]);
+    $output[$key] = str_replace('(  ', '(', $output[$key]);
+    $output[$key] = str_replace(',  ', ',', $output[$key]);
+    $output[$key] = str_replace('( ', '(', $output[$key]);
+    $output[$key] = str_replace(', ', ',', $output[$key]);
+    $output[$key] = explode(' ', $output[$key]);
+  }
+  $index['colors'] = $output;
+  
+  // Store index in the node.
+  $node->field_provinces_colors[LANGUAGE_NONE][0]['value'] = serialize($index);
+  field_attach_update('node', $node);
+  
+  // Process batch to build the svg preview.
+  $batch = array(
+    'operations' => array(),
+    'finished' => 'mod_tool_build_svg_batch_finished',
+    'title' => t('Building SVG regions'),
+    'init_message' => t('Process is starting.'),
+    'progress_message' => t('Vectorized @current regions out of @total.'),
+    'error_message' => t('The process encountered an error.'),
+  );
+  foreach($index['colors'] as $color) {
+    $batch['operations'][] = array(
+      'mod_tool_build_svg_batch', array($color, $source_image, $node->nid)
+    );
+  }
+  batch_set($batch);
+}
+
+/**
+ * Batch 'finished' callback
+ */
+function mod_tool_build_svg_batch_finished($success, $results, $operations) {
+  if ($success) {
+    $node = node_load($results['nid']);
+    $node->field_provinces_svg[LANGUAGE_NONE][0]['value'] = serialize($results['svg']);
+    field_attach_update('node', $node);
+
+    // Here we do something meaningful with the results.
+    $message = t('@count regions successfully processed', array('@count' => count($results['svg']['paths'])));
+    
+  }
+  else {
+    // An error occurred.
+    $error_operation = reset($operations);
+    $message = t('An error occurred while processing %error_operation with arguments: @arguments', array('%error_operation' => $error_operation[0], '@arguments' => print_r($error_operation[1], TRUE)));
+  }
+  drupal_set_message($message);
+}
+
+function mod_tool_build_svg_batch($color, $path_png, $nid, &$context) {
+  $key = $color[1];
+  $key = str_replace(array('(', ')'), '', $key);
+  $key = str_replace(array(','), '-', $key);
+  $context['results']['nid'] = $nid;
+  $path_bmp = file_directory_temp() . '/tmp.bmp';
+  $path_svg = file_directory_temp() . '/tmp.svg';
+  
+  // Remove tmp files if they exists (previously halted process).
+  if (file_exists($path_bmp)) {
+    unlink($path_bmp);
+  }
+  if (file_exists($path_svg)) {
+    unlink($path_svg);
+  }
+
+  // Only keep the region in the current color for vectorization,
+  // current color is replace with white, all other regions fade to black.
+  // Output a bmp file for potrace.
+  if ($key == '255-255-255') {
+    $replacement = 'grey';
+  }
+  else {
+    $replacement = 'white';
+  }
+  exec('convert ' . $path_png . ' -fill ' . $replacement . ' +opaque rgb' . $color[1] . ' ' . $path_bmp);
+  exec('convert ' . $path_bmp . ' -fill black -opaque rgb' . $color[1] . ' ' . $path_bmp);
+
+  // Process potrace to vectorize the image.
+  exec('potrace -s ' . $path_bmp . ' -o ' . $path_svg);
+  
+  // Debug stuffs
+  /*exec('convert ' . $path_png . ' -fill ' . $replacement . ' +opaque rgb' . $color[1] . ' ' . $path_bmp);
+  exec('convert ' . $path_bmp . ' -fill black -opaque rgb' . $color[1] . ' ' . file_directory_temp() . '/tmp'. $key .'.bmp');
+  exec('potrace -s ' . file_directory_temp() . '/tmp'. $key .'.bmp' . ' -o ' . file_directory_temp() . '/tmp'. $key .'.svg');*/
+  
+  // Retrieve SVG file content.
+  $file_svg = file_get_contents($path_svg);
+  if (!empty($file_svg)) {
+    $svg = new SimpleXMLElement($file_svg);    
+    
+    // If <svg> tag is not set, retrieve its attributes.
+    if (!isset($context['results']['svg'])) {
+      $context['results']['svg'] = array(
+        'height' => (string) $svg->attributes()->height,
+        'width' => (string) $svg->attributes()->width,
+        'viewBox' => (string) $svg->attributes()->viewBox,
+      );
+    }
+    
+    // Get paths.
+    $context['results']['svg']['transform'][$key] = (string) $svg->g->attributes()->transform;
+    foreach($svg->g->path as $path) {
+      $context['results']['svg']['paths'][$key][] = (string) $path->attributes()->d;
+    }
+  }
+  
+  // Remove work files.
+  unlink($path_bmp);
+  unlink($path_svg);
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function mod_tool_theme_registry_alter(&$theme_registry) {
+    // Defined path to the current module.
+    $module_path = drupal_get_path('module', 'mod_tool');
+    
+    // Find all .tpl.php files in this module's folder recursively.
+    $template_file_objects = drupal_find_theme_templates($theme_registry, '.tpl.php', $module_path .'/templates');
+    // Iterate through all found template file objects.
+    foreach ($template_file_objects as $key => $template_file_object) {
+      // If the template has not already been overridden by a theme.
+      if (!isset($theme_registry[$key]['theme path']) || !preg_match('#/themes/#', $theme_registry[$key]['theme path'])) {
+        // Alter the theme path and template elements.
+        $theme_registry[$key]['theme path'] = $module_path;
+        $theme_registry[$key] = array_merge($theme_registry[$key], $template_file_object);
+        $theme_registry[$key]['type'] = 'module';
+      }
+    }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function mod_tool_preprocess(&$variables){
+  if(isset($variables['node']) && $variables['node']->type == 'mod') {
+    $node = $variables['node'];
+    $variables['map'] = theme('mod_tool_map', array('node' => $node));
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function mod_tool_theme() {
+  return array(
+    'mod_tool_map' => array(
+      'variables' => array('node' => NULL),
+    ),
+    'mod_tool_definition_form' => array(
+      'render element' => 'form',
+    ),
+  );
+}
+
+/**
+ * Custom theme function to output an svg map based on precalculated data.
+ */
+function theme_mod_tool_map($variables) {
+  $node = $variables['node'];
+  $output = '';
+  if (isset($node->field_provinces_svg[LANGUAGE_NONE])) {
+    $svg = unserialize($node->field_provinces_svg[LANGUAGE_NONE][0]['value']);
+    $output = '<map><svg height="' . $svg['height'] . '" width="' . $svg['width'] . '" viewBox="' . $svg['viewBox'] . '" version="1.1">';
+    foreach($svg['paths'] as $color => $path) {
+      $output .= '<g id="'. $color .'" transform="' . $svg['transform'][$color] . '" >';
+      foreach($path as $data) {
+        $output .= '<path d="' . $data . '" />';
+      }
+      $output .= '</g>';
+    }
+    $output .= '</svg></map>';
+  }
+      
+  return $output;
+}
+
+/**
+ * Custom provinces definition form.
+ */
+function mod_tool_definition_form($form, &$form_state, $node) {
+  $form['provinces']['#tree'] = TRUE;
+  $form['provinces']['#weight'] = 0;
+  $form['map'] = array(
+    '#type' => 'markup',
+    '#markup' => theme('mod_tool_map', array('node' => $node)),
+    '#prefix' => '<div id="map-preview">',
+    '#suffix' => '</div>',
+    '#weight' => 1,
+  );
+  
+  if (isset($node->field_provinces_definition[LANGUAGE_NONE])) {
+    // Get all provinces definition.
+    $result = $node->field_provinces_definition[LANGUAGE_NONE];
+    foreach ($result as $key => $data) {
+      // Create the row entry.
+      $form['provinces'][$key] = array(
+        'name' => array(
+          '#type' => 'textfield',
+          '#title' => t('Name'),
+          '#title_display' => 'invisible',
+        ),
+        'code' => array(
+          '#type' => 'select',
+          '#options' => _mod_tool_colors_get($node),
+        ),
+        'weight' => array(
+          '#type' => 'weight',
+          '#title' => t('Weight'),
+          '#default_value' => count($form['provinces']) - 1,
+          '#delta' => 999999,
+          '#title_display' => 'invisible',
+        ),
+        'actions' => array(
+          '#type' => 'checkbox',
+          '#value' => t('Delete'),
+        ),
+      );
+    }
+  }
+  
+  // New element.
+  $form['provinces'][] = array(
+    'name' => array(
+      '#type' => 'textfield',
+      '#title' => t('Name'),
+      '#title_display' => 'invisible',
+    ),
+    'code' => array(
+      '#type' => 'select',
+      '#options' => _mod_tool_colors_get($node),
+    ),
+    'weight' => array(
+      '#type' => 'weight',
+      '#title' => t('Weight'),
+      '#default_value' => count($form['provinces']) - 1,
+      '#delta' => 999999,
+      '#title_display' => 'invisible',
+    ),
+    'actions' => array(
+      '#type' => 'submit',
+      '#value' => t('Add new province'),
+      '#ajax' => array(
+        'callback' => 'ajax_example_add_more_callback',
+        'wrapper' => 'names-fieldset-wrapper',
+      ),
+    ),
+  );
+
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array('#type' => 'submit', '#value' => t('Save Changes'));
+  
+  return $form;
+}
+
+/**
+ * Custom theme function to display provinces definition form.
+ */
+function theme_mod_tool_definition_form($variables) {
+  $form = $variables['form'];
+
+  // Initialize the variable which will store our table rows.
+  $rows = array();
+
+  // Iterate over each element in our $form['example_items'] array.
+  foreach (element_children($form['provinces']) as $id) {
+
+    // Before we add our 'weight' column to the row, we need to give the
+    // element a custom class so that it can be identified in the
+    // drupal_add_tabledrag call.
+    //
+    // This could also have been done during the form declaration by adding
+    // '#attributes' => array('class' => 'example-item-weight'),
+    // directy to the 'weight' element in tabledrag_example_simple_form().
+    $form['provinces'][$id]['weight']['#attributes']['class'] = array('example-item-weight');
+
+    // We are now ready to add each element of our $form data to the $rows
+    // array, so that they end up as individual table cells when rendered
+    // in the final table.  We run each element through the drupal_render()
+    // function to generate the final html markup for that element.
+    $rows[] = array(
+      'data' => array(
+        // Add our 'name' column.
+        drupal_render($form['provinces'][$id]['name']),
+        // Add our 'description' column.
+        drupal_render($form['provinces'][$id]['code']),
+        // Add our 'weight' column.
+        drupal_render($form['provinces'][$id]['weight']),
+        // Add our 'weight' column.
+        drupal_render($form['provinces'][$id]['actions']),
+      ),
+      // To support the tabledrag behaviour, we need to assign each row of the
+      // table a class attribute of 'draggable'. This will add the 'draggable'
+      // class to the <tr> element for that row when the final table is
+      // rendered.
+      'class' => array('draggable'),
+    );
+  }
+
+  // We now define the table header values.  Ensure that the 'header' count
+  // matches the final column count for your table.
+  $header = array(t('Name'), t('Code'), t('Weight'), t('Actions'));
+
+  // We also need to pass the drupal_add_tabledrag() function an id which will
+  // be used to identify the <table> element containing our tabledrag form.
+  // Because an element's 'id' should be unique on a page, make sure the value
+  // you select is NOT the same as the form ID used in your form declaration.
+  $table_id = 'example-items-table';
+
+  // We can render our tabledrag table for output.
+  $output = theme('table', array(
+    'header' => $header,
+    'rows' => $rows,
+    'attributes' => array('id' => $table_id),
+  ));
+
+  // And then render any remaining form elements (such as our submit button).
+  $output .= drupal_render_children($form);
+
+  // We now call the drupal_add_tabledrag() function in order to add the
+  // tabledrag.js goodness onto our page.
+  //
+  // For a basic sortable table, we need to pass it:
+  // - the $table_id of our <table> element,
+  // - the $action to be performed on our form items ('order'),
+  // - a string describing where $action should be applied ('siblings'),
+  // - and the class of the element containing our 'weight' element.
+  drupal_add_tabledrag($table_id, 'order', 'sibling', 'example-item-weight');
+
+  return $output;
+}
+
+/**
+ * Custom function to retrieve the color list of the current map.
+ */
+function _mod_tool_colors_get($node) {
+  $colors = array();
+  if (isset($node->field_provinces_colors[LANGUAGE_NONE])) {
+    $index = unserialize($node->field_provinces_colors[LANGUAGE_NONE][0]['value']);
+    foreach($index['colors'] as $color) {
+      if (isset($color[1])) {
+        $key = str_replace(array('(', ')'), '', $color[1]);
+        $key = str_replace(',', '-', $key);
+        $colors[$key] = $color[1];
+      }
+    }
+  }
+  return $colors;
+}

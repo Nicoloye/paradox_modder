@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Ideas feature.
+ */
+
+include_once 'eu4_ct_ideas.features.inc';

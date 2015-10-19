@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Governments feature.
+ */
+
+include_once 'eu4_ct_governments.features.inc';

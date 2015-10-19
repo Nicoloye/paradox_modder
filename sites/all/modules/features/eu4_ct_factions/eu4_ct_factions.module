@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Factions feature.
+ */
+
+include_once 'eu4_ct_factions.features.inc';

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Cultures feature.
+ */
+
+include_once 'eu4_ct_cultures.features.inc';

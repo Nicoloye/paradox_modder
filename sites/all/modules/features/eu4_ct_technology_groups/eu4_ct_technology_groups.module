@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Technology groups feature.
+ */
+
+include_once 'eu4_ct_technology_groups.features.inc';

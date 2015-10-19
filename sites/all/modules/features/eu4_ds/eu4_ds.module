@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Display suite feature.
+ */
+
+include_once 'eu4_ds.features.inc';

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Provinces feature.
+ */
+
+include_once 'eu4_ct_provinces.features.inc';

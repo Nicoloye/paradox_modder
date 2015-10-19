@@ -1,0 +1,8 @@
+name = Mod Tool
+description = Provides custom behaviors for Mod Tool.
+core = 7.x
+version = 7.x-1.0
+package = Mod Tool
+
+stylesheets[all][] = css/mod_tool.css
+scripts[] = js/mod_tool.js

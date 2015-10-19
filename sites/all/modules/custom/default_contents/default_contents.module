@@ -1,0 +1,20 @@
+<?php
+
+function _default_contents_prepare_term($vocabulary_name) {
+  $vocabulary = taxonomy_vocabulary_machine_name_load($vocabulary_name);
+  $term = new stdClass();
+  $term->vid = $vocabulary->vid;
+  return $term;
+}
+
+function _default_contents_prepare_node($type) {
+  $node = new stdClass();
+  $node->type = $type;
+  node_object_prepare($node);
+  return $node;
+}
+
+function _default_contents_save_node($node) {
+  $node = node_submit($node);
+  node_save($node);
+}
