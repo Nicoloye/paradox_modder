@@ -8,4 +8,5 @@ features[features_api][] = api:2
 features[taxonomy][] = countries
 features[taxonomy][] = factions
 features[taxonomy][] = ideas
+features[taxonomy][] = languages
 project path = sites/all/modules/features

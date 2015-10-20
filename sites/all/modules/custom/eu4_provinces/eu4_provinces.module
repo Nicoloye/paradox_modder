@@ -1,0 +1,267 @@
+<?php
+
+/**
+ * @file
+ * Provides custom behaviors for EU4 provinces.
+ */
+ 
+/**
+ * Implements hook_form_alter().
+ */
+function eu4_provinces_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == '_eu4_contents_form') {
+    _eu4_contents_prepare_form($form);
+    $settings = variable_get('eu4_provinces_build', array(
+      'eu4_provinces_history' => TRUE,
+      'eu4_provinces_common_names' => TRUE,
+    ));
+    
+    $form['eu4_contents']['provinces'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Provinces'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#group' => 'eu4_contents',
+      '#weight' => 1,
+    );
+    
+    // Separate files.
+    $form['eu4_contents']['provinces']['files'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Separate files'),
+      '#collapsible' => FALSE,
+      '#weight' => 0,
+    );
+    $form['eu4_contents']['provinces']['files']['eu4_provinces_history'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('History file : %path', array('%path' => '\history\countries\[code] - [name].txt')),
+      '#default_value' => $settings['eu4_provinces_history'], 
+      '#weight' => 0,
+    );
+    
+    // Single entries.
+    $form['eu4_contents']['provinces']['entries'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Single entries'),
+      '#collapsible' => FALSE,
+      '#weight' => 1,
+    );
+    $form['eu4_contents']['provinces']['entries']['eu4_provinces_common_names'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Common names files : %path', array('%path' => '\common\province_names\[language].txt')),
+      '#default_value' => $settings['eu4_provinces_common_names'], 
+      '#weight' => 0,
+    );
+    
+    $form['#submit'][] = '_eu4_provinces_prepare_batch';
+  }
+}
+ 
+/**
+ * Implements hook_preprocess().
+ */
+function eu4_provinces_preprocess(&$variables, $hook) {
+  if (array_key_exists($hook, entity_get_info())) {
+    $bundle = $variables['elements']['#bundle'];
+    $view_mode = $variables['elements']['#view_mode'];
+    
+    if ($bundle == 'province' && $view_mode == 'full') {
+      // Build the full version of the node with each different view modes.
+      $node = $variables['node'];
+            
+      $view_modes = array(
+        'eu4_provinces_history' => '<strong>\history\provinces\\' . $node->field_code[LANGUAGE_NONE][0]['value'] . '-' . $node->title . '.txt</strong><div class="content clearfix">',
+      );
+      
+      foreach($view_modes as $view_mode => $content) {
+        $node_view = node_view($node, $view_mode);
+        $variables['content_' . $view_mode] = $content . _eu4_clean_lua(render($node_view)) . '</div>';
+      }
+      
+      // Specific case for the provinces' names, each entry is in a different file.
+      if (!empty($node->field_province_names[LANGUAGE_NONE])) {
+        $content = array();
+        foreach ($node->field_province_names[LANGUAGE_NONE] as $delta => $item) {
+          $fc = entity_load('field_collection_item', array($item['value']));
+          $fc = $fc[$item['value']];
+          
+          foreach ($fc->field_province_name[LANGUAGE_NONE] as $delta => $item) {
+            $name = $item['value'];
+            $language = $fc->field_language[LANGUAGE_NONE][$delta]['taxonomy_term']->name;
+            $language = str_replace(' ', '_', strtolower($language));
+            
+            $content[] = '<strong>\common\province_names\\' . $language . '.txt</strong><div class="content clearfix">' . $node->field_code[LANGUAGE_NONE][0]['value'] . ' = "' . $name . '"</div>';
+          }
+        }
+        $variables['content_eu4_provinces_common_names'] = implode('<br/>', $content);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function eu4_provinces_theme_registry_alter(&$theme_registry) {
+    // Defined path to the current module.
+    $module_path = drupal_get_path('module', 'eu4_provinces');
+    
+    // Find all .tpl.php files in this module's folder recursively.
+    $template_file_objects = drupal_find_theme_templates($theme_registry, '.tpl.php', $module_path .'/templates');
+    // Iterate through all found template file objects.
+    foreach ($template_file_objects as $key => $template_file_object) {
+      // If the template has not already been overridden by a theme.
+      if (!isset($theme_registry[$key]['theme path']) || !preg_match('#/themes/#', $theme_registry[$key]['theme path'])) {
+        // Alter the theme path and template elements.
+        $theme_registry[$key]['theme path'] = $module_path;
+        $theme_registry[$key] = array_merge($theme_registry[$key], $template_file_object);
+        $theme_registry[$key]['type'] = 'module';
+      }
+    }
+}
+
+/**
+ * Custom submit handler for the content generation form.
+ */
+function _eu4_provinces_prepare_batch($form, $form_state) {
+  // Update settings.
+  $settings = array();
+  foreach ($form_state['values'] as $key => $value) {
+    if (strpos($key, 'eu4_provinces_') !== FALSE) {
+      $settings[$key] = $value;
+    }
+  }
+  variable_set('eu4_provinces_build', $settings);
+  
+  if ($form_state['values']['eu4_provinces_history'] || $form_state['values']['eu4_provinces_common_names']) {
+    // Prepare batch
+    $batch = array(
+      'operations' => array(),
+      'finished' => '_eu4_provinces_batch_finished',
+      'title' => t('Building provinces files & entries'),
+      'init_message' => t('Process is starting.'),
+      'progress_message' => t('Built @current provinces files/entries out of @total.'),
+      'error_message' => t('The process encountered an error.'),
+    );
+    
+    $query = db_select('node', 'n');
+    $query->fields('n', array('nid'));
+    $query->leftjoin('field_data_field_mod', 'fm', 'n.nid = fm.entity_id');
+    $query->leftjoin('field_data_field_country_category', 'fc', 'n.nid = fc.field_country_category_tid');
+    $query->fields('fc', array('field_country_category_tid'));
+    $query->leftjoin('taxonomy_term_data', 't', 'fc.field_country_category_tid = t.tid');
+    $query->fields('t', array('name', 'weight'));
+    $query->condition('fm.field_mod_target_id', $form_state['values']['mod']);
+    $query->condition('n.type', 'country');
+    $query->condition('n.status', 1);
+    $query->orderBy('t.weight', 'ASC');
+    $query->orderBy('t.name', 'ASC');
+    $query->orderBy('n.title', 'ASC');
+    
+    if ($form_state['values']['eu4_provinces_history']) {
+      $index = 0;
+      $results = $query->execute();
+      $max = $results->rowCount();
+      foreach($results as $result) {
+        $batch['operations'][] = array(
+          '_eu4_provinces_batch', array($index, $max, FALSE, $result->nid, 'eu4_provinces_history')
+        );
+        $index++;
+      }
+    }
+    
+    if ($form_state['values']['eu4_provinces_common_names']) {
+      $index = 0;
+      $results = $query->execute();
+      $max = $results->rowCount();
+      $category = '';
+      foreach($results as $result) {
+        // Detect group starts.
+        $group = FALSE;
+        if ($category != $result->name || $index == 0) {
+          $category = $result->name;
+          $group = TRUE;
+        }
+        
+        $batch['operations'][] = array(
+          '_eu4_provinces_batch', array($index, $max, $group, $result->nid, 'eu4_provinces_common_tags')
+        );
+        $index++;
+      }
+    }
+    
+    // Set batch.
+    batch_set($batch);
+  }
+}
+
+/**
+ * Batch callback.
+ */
+function _eu4_provinces_batch($index, $max, $group, $nid, $build, &$context) {
+  $error = FALSE;
+  $node = node_load($nid);
+  
+  switch($build) {
+    case 'eu4_provinces_history':
+      $path = '\history\countries\\' . $node->field_code[LANGUAGE_NONE][0]['value'] . ' - ' . $node->title . '.txt';
+      $file = _eu4_build_single_file($node, $build, $path, FALSE);
+      break;
+      
+    case 'eu4_provinces_common':
+      $path = '\common\countries\\' . $node->title . '.txt';
+      $file = _eu4_build_single_file($node, $build, $path, FALSE);
+      break;
+      
+    case 'eu4_provinces_common_colors':
+      $path = '\common\country_colors\00_country_colors.txt';
+      if ($index == 0) {
+        $content = "# Country unit colors.\r\n\r\n";
+        $file = _eu4_build_single_file($node, $build, $path, FALSE, $content);
+        $file = _eu4_build_single_file($node, $build, $path, TRUE);
+      }
+      else {
+        $file = _eu4_build_single_file($node, $build, $path, TRUE);
+      }
+      break;
+    
+    case 'eu4_provinces_common_tags':
+      $path = '\common\country_tags\00_countries.txt';
+      // Add the file beginning.
+      if ($index == 0) {
+        $content = "# Special countries..\r\nREB = \"countries/Rebels.txt\"\r\nPIR = \"countries/Pirates.txt\"\r\nNAT = \"countries/Natives.txt\"\r\n\r\n";
+        $file = _eu4_build_single_file($node, $build, $path, FALSE, $content);
+      }
+      // Add category if we reached a new group.
+      if ($group) {
+        if (!empty($node->field_country_category[LANGUAGE_NONE][0]['tid'])) {
+          $term = term_load($node->field_country_category[LANGUAGE_NONE][0]['tid']);
+          $content = '#' . $term->name . "\r\n";
+        }
+        else {
+          $content = "# ???\r\n";
+        }
+        $file = _eu4_build_single_file($node, $build, $path, TRUE, $content);
+      }
+      // Add the country entry.
+      $file = _eu4_build_single_file($node, $build, $path, TRUE);
+      break;
+  }
+}
+
+/**
+ * Batch 'finished' callback
+ */
+function _eu4_provinces_batch_finished($success, $results, $operations) {
+  if ($success) {
+    $message = t('Countries files and entries successfully processed');
+  }
+  // An error occurred.
+  else {    
+    $error_operation = reset($operations);
+    $message = t('An error occurred while processing %error_operation with arguments: @arguments', array('%error_operation' => $error_operation[0], '@arguments' => print_r($error_operation[1], TRUE)));
+  }
+  drupal_set_message($message);
+}
+
+

@@ -10,6 +10,81 @@
 function eu4_ct_provinces_field_default_field_instances() {
   $field_instances = array();
 
+  // Exported field_instance:
+  // 'field_collection_item-field_province_names-field_language'.
+  $field_instances['field_collection_item-field_province_names-field_language'] = array(
+    'bundle' => 'field_province_names',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'taxonomy',
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
+        'type' => 'taxonomy_term_reference_link',
+        'weight' => 1,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_language',
+    'label' => 'Language',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_select',
+      'weight' => 0,
+    ),
+  );
+
+  // Exported field_instance:
+  // 'field_collection_item-field_province_names-field_province_name'.
+  $field_instances['field_collection_item-field_province_names-field_province_name'] = array(
+    'bundle' => 'field_province_names',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_province_name',
+    'label' => 'Province name',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 1,
+    ),
+  );
+
   // Exported field_instance: 'node-province-field_add_core'.
   $field_instances['node-province-field_add_core'] = array(
     'bundle' => 'province',
@@ -21,9 +96,28 @@ function eu4_ct_provinces_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
+        'weight' => 1,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_entity_code',
         'weight' => 1,
       ),
       'teaser' => array(
@@ -65,11 +159,30 @@ function eu4_ct_provinces_field_default_field_instances() {
         'module' => 'number',
         'settings' => array(
           'decimal_separator' => '.',
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'prefix_suffix' => TRUE,
           'scale' => 0,
           'thousand_separator' => ' ',
         ),
         'type' => 'number_integer',
+        'weight' => 19,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 19,
       ),
       'teaser' => array(
@@ -95,7 +208,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 21,
+      'weight' => 20,
     ),
   );
 
@@ -111,11 +224,30 @@ function eu4_ct_provinces_field_default_field_instances() {
         'module' => 'number',
         'settings' => array(
           'decimal_separator' => '.',
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'prefix_suffix' => TRUE,
           'scale' => 0,
           'thousand_separator' => ' ',
         ),
         'type' => 'number_integer',
+        'weight' => 7,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 7,
       ),
       'teaser' => array(
@@ -141,7 +273,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 9,
+      'weight' => 8,
     ),
   );
 
@@ -157,11 +289,30 @@ function eu4_ct_provinces_field_default_field_instances() {
         'module' => 'number',
         'settings' => array(
           'decimal_separator' => '.',
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'prefix_suffix' => TRUE,
           'scale' => 0,
           'thousand_separator' => ' ',
         ),
         'type' => 'number_integer',
+        'weight' => 20,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 20,
       ),
       'teaser' => array(
@@ -187,7 +338,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 22,
+      'weight' => 21,
     ),
   );
 
@@ -201,8 +352,18 @@ function eu4_ct_provinces_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'text',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'text_default',
+        'weight' => 0,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
         'weight' => 0,
       ),
       'teaser' => array(
@@ -234,19 +395,35 @@ function eu4_ct_provinces_field_default_field_instances() {
   // Exported field_instance: 'node-province-field_constable'.
   $field_instances['node-province-field_constable'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 33,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 33,
       ),
       'teaser' => array(
@@ -266,11 +443,9 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 35,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 34,
     ),
   );
 
@@ -285,9 +460,28 @@ function eu4_ct_provinces_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
+        'weight' => 3,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_entity_code',
         'weight' => 3,
       ),
       'teaser' => array(
@@ -320,19 +514,35 @@ function eu4_ct_provinces_field_default_field_instances() {
   // Exported field_instance: 'node-province-field_courthouse'.
   $field_instances['node-province-field_courthouse'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 28,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 28,
       ),
       'teaser' => array(
@@ -352,11 +562,9 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 30,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 29,
     ),
   );
 
@@ -371,9 +579,28 @@ function eu4_ct_provinces_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
+        'weight' => 4,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_entity_title',
         'weight' => 4,
       ),
       'teaser' => array(
@@ -410,9 +637,28 @@ function eu4_ct_provinces_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
+        'weight' => 18,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => 0,
+          'cascade' => 1,
+          'field_wrapper' => 0,
+          'force_embed' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_entity_code',
         'weight' => 18,
       ),
       'teaser' => array(
@@ -438,26 +684,42 @@ function eu4_ct_provinces_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'entityreference_autocomplete',
-      'weight' => 20,
+      'weight' => 19,
     ),
   );
 
   // Exported field_instance: 'node-province-field_dock'.
   $field_instances['node-province-field_dock'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 32,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 32,
       ),
       'teaser' => array(
@@ -477,11 +739,9 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 34,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 33,
     ),
   );
 
@@ -497,11 +757,30 @@ function eu4_ct_provinces_field_default_field_instances() {
         'module' => 'number',
         'settings' => array(
           'decimal_separator' => '.',
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'prefix_suffix' => TRUE,
           'scale' => 0,
           'thousand_separator' => ' ',
         ),
         'type' => 'number_integer',
+        'weight' => 24,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 24,
       ),
       'teaser' => array(
@@ -527,26 +806,42 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 26,
+      'weight' => 25,
     ),
   );
 
   // Exported field_instance: 'node-province-field_fort1'.
   $field_instances['node-province-field_fort1'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 10,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 10,
       ),
       'teaser' => array(
@@ -566,30 +861,44 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 12,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 11,
     ),
   );
 
   // Exported field_instance: 'node-province-field_fort2'.
   $field_instances['node-province-field_fort2'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 11,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 11,
       ),
       'teaser' => array(
@@ -609,30 +918,44 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 13,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 12,
     ),
   );
 
   // Exported field_instance: 'node-province-field_fort3'.
   $field_instances['node-province-field_fort3'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 12,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 12,
       ),
       'teaser' => array(
@@ -652,30 +975,44 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 14,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 13,
     ),
   );
 
   // Exported field_instance: 'node-province-field_hre'.
   $field_instances['node-province-field_hre'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 6,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 6,
       ),
       'teaser' => array(
@@ -695,30 +1032,44 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 8,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 7,
     ),
   );
 
   // Exported field_instance: 'node-province-field_is_city'.
   $field_instances['node-province-field_is_city'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 14,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 14,
       ),
       'teaser' => array(
@@ -738,11 +1089,9 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 16,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 15,
     ),
   );
 
@@ -758,11 +1107,30 @@ function eu4_ct_provinces_field_default_field_instances() {
         'module' => 'number',
         'settings' => array(
           'decimal_separator' => '.',
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'prefix_suffix' => TRUE,
           'scale' => 0,
           'thousand_separator' => ' ',
         ),
         'type' => 'number_integer',
+        'weight' => 9,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 9,
       ),
       'teaser' => array(
@@ -788,26 +1156,42 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 11,
+      'weight' => 10,
     ),
   );
 
   // Exported field_instance: 'node-province-field_marketplace'.
   $field_instances['node-province-field_marketplace'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 17,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 17,
       ),
       'teaser' => array(
@@ -827,11 +1211,9 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 19,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 18,
     ),
   );
 
@@ -847,11 +1229,30 @@ function eu4_ct_provinces_field_default_field_instances() {
         'module' => 'number',
         'settings' => array(
           'decimal_separator' => '.',
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'prefix_suffix' => TRUE,
           'scale' => 0,
           'thousand_separator' => ' ',
         ),
         'type' => 'number_integer',
+        'weight' => 22,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 22,
       ),
       'teaser' => array(
@@ -877,7 +1278,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 24,
+      'weight' => 23,
     ),
   );
 
@@ -893,11 +1294,30 @@ function eu4_ct_provinces_field_default_field_instances() {
         'module' => 'number',
         'settings' => array(
           'decimal_separator' => '.',
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'prefix_suffix' => TRUE,
           'scale' => 0,
           'thousand_separator' => ' ',
         ),
         'type' => 'number_integer',
+        'weight' => 23,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 23,
       ),
       'teaser' => array(
@@ -923,7 +1343,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 25,
+      'weight' => 24,
     ),
   );
 
@@ -939,11 +1359,30 @@ function eu4_ct_provinces_field_default_field_instances() {
         'module' => 'number',
         'settings' => array(
           'decimal_separator' => '.',
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'prefix_suffix' => TRUE,
           'scale' => 0,
           'thousand_separator' => ' ',
         ),
         'type' => 'number_integer',
+        'weight' => 21,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 21,
       ),
       'teaser' => array(
@@ -969,7 +1408,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 23,
+      'weight' => 22,
     ),
   );
 
@@ -984,9 +1423,28 @@ function eu4_ct_provinces_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
+        'weight' => 2,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_entity_code',
         'weight' => 2,
       ),
       'teaser' => array(
@@ -1026,8 +1484,28 @@ function eu4_ct_provinces_field_default_field_instances() {
       'default' => array(
         'label' => 'above',
         'module' => 'text',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'text_default',
+        'weight' => 13,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 13,
       ),
       'teaser' => array(
@@ -1052,7 +1530,53 @@ function eu4_ct_provinces_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 15,
+      'weight' => 14,
+    ),
+  );
+
+  // Exported field_instance: 'node-province-field_province_names'.
+  $field_instances['node-province-field_province_names'] = array(
+    'bundle' => 'province',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'field_collection',
+        'settings' => array(
+          'add' => 'Add',
+          'delete' => 'Delete',
+          'description' => TRUE,
+          'edit' => 'Edit',
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'view_mode' => 'full',
+        ),
+        'type' => 'field_collection_view',
+        'weight' => 35,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_province_names',
+    'label' => 'Province names',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'field_collection',
+      'settings' => array(),
+      'type' => 'field_collection_embed',
+      'weight' => 36,
     ),
   );
 
@@ -1067,9 +1591,28 @@ function eu4_ct_provinces_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
+        'weight' => 5,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_entity_title',
         'weight' => 5,
       ),
       'teaser' => array(
@@ -1091,7 +1634,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 7,
+      'weight' => 6,
     ),
   );
 
@@ -1107,11 +1650,30 @@ function eu4_ct_provinces_field_default_field_instances() {
         'module' => 'number',
         'settings' => array(
           'decimal_separator' => '.',
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'prefix_suffix' => TRUE,
           'scale' => 0,
           'thousand_separator' => ' ',
         ),
         'type' => 'number_integer',
+        'weight' => 26,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 26,
       ),
       'teaser' => array(
@@ -1137,26 +1699,42 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 28,
+      'weight' => 27,
     ),
   );
 
   // Exported field_instance: 'node-province-field_shipyard'.
   $field_instances['node-province-field_shipyard'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 27,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 27,
       ),
       'teaser' => array(
@@ -1176,30 +1754,44 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 29,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 28,
     ),
   );
 
   // Exported field_instance: 'node-province-field_tax_assessor'.
   $field_instances['node-province-field_tax_assessor'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 30,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 30,
       ),
       'teaser' => array(
@@ -1219,30 +1811,44 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 32,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 31,
     ),
   );
 
   // Exported field_instance: 'node-province-field_temple'.
   $field_instances['node-province-field_temple'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 15,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 15,
       ),
       'teaser' => array(
@@ -1262,30 +1868,44 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 17,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 16,
     ),
   );
 
   // Exported field_instance: 'node-province-field_textile'.
   $field_instances['node-province-field_textile'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 34,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 34,
       ),
       'teaser' => array(
@@ -1305,30 +1925,44 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 36,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 35,
     ),
   );
 
   // Exported field_instance: 'node-province-field_trade_depot'.
   $field_instances['node-province-field_trade_depot'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 31,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 31,
       ),
       'teaser' => array(
@@ -1348,11 +1982,9 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 33,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 32,
     ),
   );
 
@@ -1367,9 +1999,28 @@ function eu4_ct_provinces_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
+        'weight' => 8,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_entity_title',
         'weight' => 8,
       ),
       'teaser' => array(
@@ -1391,26 +2042,42 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 10,
+      'weight' => 9,
     ),
   );
 
   // Exported field_instance: 'node-province-field_university'.
   $field_instances['node-province-field_university'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 25,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 25,
       ),
       'teaser' => array(
@@ -1430,11 +2097,9 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 27,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 26,
     ),
   );
 
@@ -1450,11 +2115,30 @@ function eu4_ct_provinces_field_default_field_instances() {
         'module' => 'number',
         'settings' => array(
           'decimal_separator' => '.',
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
           'prefix_suffix' => TRUE,
           'scale' => 0,
           'thousand_separator' => ' ',
         ),
         'type' => 'number_integer',
+        'weight' => 29,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 29,
       ),
       'teaser' => array(
@@ -1480,26 +2164,42 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 31,
+      'weight' => 30,
     ),
   );
 
   // Exported field_instance: 'node-province-field_workshop'.
   $field_instances['node-province-field_workshop'] = array(
     'bundle' => 'province',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
         'module' => 'list',
-        'settings' => array(),
+        'settings' => array(
+          'field_wrapper' => 0,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+        ),
         'type' => 'list_default',
+        'weight' => 16,
+      ),
+      'eu4_provinces_history' => array(
+        'label' => 'hidden',
+        'module' => 'eu4',
+        'settings' => array(
+          'add_line' => FALSE,
+          'cascade' => FALSE,
+          'field_wrapper' => 0,
+          'force_embed' => FALSE,
+          'item_wrapper' => 0,
+          'label_wrapper' => 0,
+          'prefix' => '',
+          'suffix' => '',
+        ),
+        'type' => 'eu4_simple_field',
         'weight' => 16,
       ),
       'teaser' => array(
@@ -1519,11 +2219,9 @@ function eu4_ct_provinces_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
-      'weight' => 18,
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 17,
     ),
   );
 
@@ -1547,12 +2245,15 @@ function eu4_ct_provinces_field_default_field_instances() {
   t('Fort3');
   t('HRE');
   t('Is city');
+  t('Language');
   t('Manpower');
   t('Marketplace');
   t('Native ferocity');
   t('Native hostileness');
   t('Native size');
   t('Owner');
+  t('Province name');
+  t('Province names');
   t('Religion');
   t('Revolt risk');
   t('Shipyard');

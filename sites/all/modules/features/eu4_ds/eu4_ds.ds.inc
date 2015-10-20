@@ -296,6 +296,116 @@ function eu4_ds_ds_layout_settings_info() {
   );
   $export['node|government|form'] = $ds_layout;
 
+  $ds_layout = new stdClass();
+  $ds_layout->api_version = 1;
+  $ds_layout->id = 'node|province|form';
+  $ds_layout->entity_type = 'node';
+  $ds_layout->bundle = 'province';
+  $ds_layout->view_mode = 'form';
+  $ds_layout->layout = 'ds_2col_stacked';
+  $ds_layout->settings = array(
+    'regions' => array(
+      'left' => array(
+        0 => 'title',
+        1 => 'field_code',
+        2 => 'field_add_core',
+        3 => 'field_owner',
+        4 => 'field_controller',
+        5 => 'field_culture',
+        6 => 'field_religion',
+        7 => 'field_hre',
+        8 => 'field_base_tax',
+        9 => 'field_trade_goods',
+        10 => 'field_manpower',
+        11 => 'field_fort1',
+        12 => 'field_fort2',
+        13 => 'field_fort3',
+        14 => 'field_province_capital',
+        15 => 'field_is_city',
+        16 => 'field_temple',
+        17 => 'field_workshop',
+        18 => 'field_marketplace',
+        19 => 'field_discovered_by',
+        20 => 'field_add_local_autonomy',
+        21 => 'field_citysize',
+        22 => 'field_native_size',
+        23 => 'field_native_ferocity',
+        24 => 'field_native_hostileness',
+        25 => 'field_extra_cost',
+        26 => 'field_university',
+        27 => 'field_revolt_risk',
+        28 => 'field_shipyard',
+        29 => 'field_courthouse',
+        30 => 'field_unrest',
+        31 => 'field_tax_assessor',
+        32 => 'field_trade_depot',
+        33 => 'field_dock',
+        34 => 'field_constable',
+        35 => 'field_textile',
+      ),
+      'right' => array(
+        36 => 'field_province_names',
+      ),
+      'hidden' => array(
+        37 => '_add_existing_field',
+      ),
+    ),
+    'fields' => array(
+      'title' => 'left',
+      'field_code' => 'left',
+      'field_add_core' => 'left',
+      'field_owner' => 'left',
+      'field_controller' => 'left',
+      'field_culture' => 'left',
+      'field_religion' => 'left',
+      'field_hre' => 'left',
+      'field_base_tax' => 'left',
+      'field_trade_goods' => 'left',
+      'field_manpower' => 'left',
+      'field_fort1' => 'left',
+      'field_fort2' => 'left',
+      'field_fort3' => 'left',
+      'field_province_capital' => 'left',
+      'field_is_city' => 'left',
+      'field_temple' => 'left',
+      'field_workshop' => 'left',
+      'field_marketplace' => 'left',
+      'field_discovered_by' => 'left',
+      'field_add_local_autonomy' => 'left',
+      'field_citysize' => 'left',
+      'field_native_size' => 'left',
+      'field_native_ferocity' => 'left',
+      'field_native_hostileness' => 'left',
+      'field_extra_cost' => 'left',
+      'field_university' => 'left',
+      'field_revolt_risk' => 'left',
+      'field_shipyard' => 'left',
+      'field_courthouse' => 'left',
+      'field_unrest' => 'left',
+      'field_tax_assessor' => 'left',
+      'field_trade_depot' => 'left',
+      'field_dock' => 'left',
+      'field_constable' => 'left',
+      'field_textile' => 'left',
+      'field_province_names' => 'right',
+      '_add_existing_field' => 'hidden',
+    ),
+    'classes' => array(),
+    'wrappers' => array(
+      'header' => 'div',
+      'left' => 'div',
+      'right' => 'div',
+      'footer' => 'div',
+    ),
+    'layout_wrapper' => 'div',
+    'layout_attributes' => '',
+    'layout_attributes_merge' => 1,
+    'layout_link_attribute' => '',
+    'layout_link_custom' => '',
+    'layout_disable_css' => 0,
+  );
+  $export['node|province|form'] = $ds_layout;
+
   return $export;
 }
 
@@ -349,6 +459,15 @@ function eu4_ds_ds_view_modes_info() {
     'node' => 'node',
   );
   $export['eu4_countries_history'] = $ds_view_mode;
+
+  $ds_view_mode = new stdClass();
+  $ds_view_mode->api_version = 1;
+  $ds_view_mode->view_mode = 'eu4_provinces_history';
+  $ds_view_mode->label = 'Provinces - History';
+  $ds_view_mode->entities = array(
+    'node' => 'node',
+  );
+  $export['eu4_provinces_history'] = $ds_view_mode;
 
   return $export;
 }
