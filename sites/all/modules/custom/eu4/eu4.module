@@ -43,6 +43,7 @@ function eu4_field_formatter_info() {
         'force_embed' => FALSE,
         'add_line' => FALSE,
         'prefix' => '',
+        'suffix' => '',
       ),
     ),
     'eu4_entity_title' => array(
@@ -53,6 +54,7 @@ function eu4_field_formatter_info() {
         'force_embed' => FALSE,
         'add_line' => FALSE,
         'prefix' => '',
+        'suffix' => '',
       ),
     ),
     'eu4_entity_code' => array(
@@ -63,6 +65,7 @@ function eu4_field_formatter_info() {
         'force_embed' => FALSE,
         'add_line' => FALSE,
         'prefix' => '',
+        'suffix' => '',
       ),
     ),
     'eu4_entity_code_title' => array(
@@ -73,6 +76,7 @@ function eu4_field_formatter_info() {
         'force_embed' => FALSE,
         'add_line' => FALSE,
         'prefix' => '',
+        'suffix' => '',
       ),
     ),
     'eu4_color_rgb' => array(
@@ -83,6 +87,7 @@ function eu4_field_formatter_info() {
         'force_embed' => FALSE,
         'add_line' => FALSE,
         'prefix' => '',
+        'suffix' => '',
       ),
     ),
     'eu4_fc_simple' => array(
@@ -93,6 +98,7 @@ function eu4_field_formatter_info() {
         'force_embed' => FALSE,
         'add_line' => FALSE,
         'prefix' => '',
+        'suffix' => '',
       ),
     ),
   );
@@ -130,6 +136,12 @@ function eu4_field_formatter_settings_form($field, $instance, $view_mode, $form,
     '#description' => t('Additional string to be displayed before the output.'),
     '#default_value'  => $settings['prefix'],
   );
+  $element['suffix'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Suffix'),
+    '#description' => t('Additional string to be displayed after the output.'),
+    '#default_value'  => $settings['suffix'],
+  );
   return $element;
 }
 
@@ -154,6 +166,9 @@ function eu4_field_formatter_settings_summary($field, $instance, $view_mode) {
   }
   if ($settings['prefix']) {
     $summary = t('Prefix set to "!prefix".', array('!prefix' => $settings['prefix']));
+  }
+  if ($settings['suffix']) {
+    $summary = t('Suffix set to "!suffix".', array('!suffix' => $settings['suffix']));
   }
   
   return $summary;
@@ -180,6 +195,7 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
   $force_embed = $settings['force_embed'];
   $add_line = $settings['add_line'];
   $prefix = $settings['prefix'];
+  $suffix = $settings['suffix'];
   $variable = str_replace(' ', '_', strtolower($instance['label']));
   $output = '';
   $values = array();
@@ -264,7 +280,7 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
       elseif (count($values) > 1 || $force_embed) {
         $output .= chr(9);
       }
-      $output .= $value . "\r\n";
+      $output .= html_entity_decode($value) . "\r\n";
     }
     
     if ((count($values) > 1 && !$cascade) || $force_embed) {
@@ -276,7 +292,7 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
       $output .= "\r\n";
     }
     
-    $element[] = array('#markup' => $prefix . $output);
+    $element[] = array('#markup' => $prefix . $output . $suffix);
   }
   
   return $element;
