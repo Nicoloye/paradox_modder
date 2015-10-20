@@ -186,9 +186,14 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
   
   switch ($display['type']) {
     // Simple fields.
-    case 'eu4_simple_field':    
+    case 'eu4_simple_field':
       foreach ($items as $delta => $item) {
         $values[$delta] = $items[$delta]['value'];
+        
+        // Fix checkboxes output.
+        if ($field['type'] == 'list_boolean' && !empty($field['settings']['allowed_values'])) {
+          $values[$delta] = $field['settings']['allowed_values'][$items[$delta]['value']];
+        }
       }
       break;
     // Entity reference fields.
@@ -242,35 +247,37 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
       break;
   }
   
-  // Multiple valued field.
-  if (!$cascade) {
-    $output = $variable . ' = ';
-    if (count($values) > 1 || $force_embed) {
-      $output .= '{' . "\r\n";
+  if (!empty($values)) {
+    // Multiple valued field.
+    if (!$cascade) {
+      $output = $variable . ' = ';
+      if (count($values) > 1 || $force_embed) {
+        $output .= '{' . "\r\n";
+      }
     }
-  }
-  
-  // Build the output.
-  foreach ($values as $delta => $value) {
-    if ($cascade && !$force_embed) {
-      $output .= $variable . ' = ';
+    
+    // Build the output.
+    foreach ($values as $delta => $value) {
+      if ($cascade && !$force_embed) {
+        $output .= $variable . ' = ';
+      }
+      elseif (count($values) > 1 || $force_embed) {
+        $output .= chr(9);
+      }
+      $output .= $value . "\r\n";
     }
-    elseif (count($values) > 1 || $force_embed) {
-      $output .= chr(9);
+    
+    if ((count($values) > 1 && !$cascade) || $force_embed) {
+      $output .= '}' . "\r\n\r\n";
     }
-    $output .= $value . "\r\n";
+    
+    // Add an additional new line if required.
+    if ($add_line) {
+      $output .= "\r\n";
+    }
+    
+    $element[] = array('#markup' => $prefix . $output);
   }
-  
-  if ((count($values) > 1 && !$cascade) || $force_embed) {
-    $output .= '}' . "\r\n\r\n";
-  }
-  
-  // Add an additional new line if required.
-  if ($add_line) {
-    $output .= "\r\n";
-  }
-  
-  $element[] = array('#markup' => $prefix . $output);
   
   return $element;
 }
