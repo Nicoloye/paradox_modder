@@ -44,6 +44,10 @@ function eu4_field_formatter_info() {
         'add_line' => FALSE,
         'prefix' => '',
         'suffix' => '',
+        'variable_hide' => FALSE,
+        'value_no_new_line' => FALSE,
+        'value_prefix' => '',
+        'value_suffix' => '',
       ),
     ),
     'eu4_entity_title' => array(
@@ -55,6 +59,10 @@ function eu4_field_formatter_info() {
         'add_line' => FALSE,
         'prefix' => '',
         'suffix' => '',
+        'variable_hide' => FALSE,
+        'value_no_new_line' => FALSE,
+        'value_prefix' => '',
+        'value_suffix' => '',
       ),
     ),
     'eu4_entity_code' => array(
@@ -66,6 +74,10 @@ function eu4_field_formatter_info() {
         'add_line' => FALSE,
         'prefix' => '',
         'suffix' => '',
+        'variable_hide' => FALSE,
+        'value_no_new_line' => FALSE,
+        'value_prefix' => '',
+        'value_suffix' => '',
       ),
     ),
     'eu4_entity_code_title' => array(
@@ -77,6 +89,10 @@ function eu4_field_formatter_info() {
         'add_line' => FALSE,
         'prefix' => '',
         'suffix' => '',
+        'variable_hide' => FALSE,
+        'value_no_new_line' => FALSE,
+        'value_prefix' => '',
+        'value_suffix' => '',
       ),
     ),
     'eu4_color_rgb' => array(
@@ -88,6 +104,10 @@ function eu4_field_formatter_info() {
         'add_line' => FALSE,
         'prefix' => '',
         'suffix' => '',
+        'variable_hide' => FALSE,
+        'value_no_new_line' => FALSE,
+        'value_prefix' => '',
+        'value_suffix' => '',
       ),
     ),
     'eu4_fc_simple' => array(
@@ -99,6 +119,10 @@ function eu4_field_formatter_info() {
         'add_line' => FALSE,
         'prefix' => '',
         'suffix' => '',
+        'variable_hide' => FALSE,
+        'value_no_new_line' => FALSE,
+        'value_prefix' => '',
+        'value_suffix' => '',
       ),
     ),
   );
@@ -142,6 +166,30 @@ function eu4_field_formatter_settings_form($field, $instance, $view_mode, $form,
     '#description' => t('Additional string to be displayed after the output.'),
     '#default_value'  => $settings['suffix'],
   );
+  $element['variable_hide'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Hide variable'),
+    '#description' => t('Checking this will only display the field value.'),
+    '#default_value'  => $settings['variable_hide'],
+  );
+  $element['value_no_new_line'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('No new line after value'),
+    '#description' => t('Checking this will not add a new line after the value.'),
+    '#default_value'  => $settings['value_no_new_line'],
+  );
+  $element['value_prefix'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Value prefix'),
+    '#description' => t('Additional string to be displayed before the value.'),
+    '#default_value'  => $settings['value_prefix'],
+  );
+  $element['value_suffix'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Value suffix'),
+    '#description' => t('Additional string to be displayed after the value.'),
+    '#default_value'  => $settings['value_suffix'],
+  );
   return $element;
 }
 
@@ -156,19 +204,31 @@ function eu4_field_formatter_settings_summary($field, $instance, $view_mode) {
   $summary = ' ';
   
   if ($settings['cascade']) {
-    $summary = t('Cascade.');
+    $summary .= t('Cascade.') .'<br \>';
   }
   if ($settings['force_embed']) {
-    $summary = t('Force embed.');
+    $summary .= t('Force embed.') .'<br \>';
   }
   if ($settings['add_line']) {
-    $summary = t('Additional line.');
+    $summary .= t('Additional line.') .'<br \>';
   }
   if ($settings['prefix']) {
-    $summary = t('Prefix set to "!prefix".', array('!prefix' => $settings['prefix']));
+    $summary .= t('Prefix set to "!prefix".', array('!prefix' => $settings['prefix'])) .'<br \>';
   }
   if ($settings['suffix']) {
-    $summary = t('Suffix set to "!suffix".', array('!suffix' => $settings['suffix']));
+    $summary .= t('Suffix set to "!suffix".', array('!suffix' => $settings['suffix'])) .'<br \>';
+  }
+  if ($settings['variable_hide']) {
+    $summary .= t('Variable hidden.') .'<br \>';
+  }
+  if ($settings['value_no_new_line']) {
+    $summary .= t('No new line after value.') .'<br \>';
+  }
+  if ($settings['value_prefix']) {
+    $summary .= t('Value prefix set to "!prefix".', array('!prefix' => $settings['value_prefix'])) .'<br \>';
+  }
+  if ($settings['value_suffix']) {
+    $summary .= t('Value suffix set to "!suffix".', array('!suffix' => $settings['value_suffix'])) .'<br \>';
   }
   
   return $summary;
@@ -196,6 +256,10 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
   $add_line = $settings['add_line'];
   $prefix = $settings['prefix'];
   $suffix = $settings['suffix'];
+  $variable_hide = $settings['variable_hide'];
+  $value_no_new_line = $settings['value_no_new_line'];
+  $value_prefix = $settings['value_prefix'];
+  $value_suffix = $settings['value_suffix'];
   $variable = str_replace(' ', '_', strtolower($instance['label']));
   $output = '';
   $values = array();
@@ -266,7 +330,9 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
   if (!empty($values)) {
     // Multiple valued field.
     if (!$cascade) {
-      $output = $variable . ' = ';
+      if (!$variable_hide) {
+        $output = $variable . ' = ';
+      }
       if (count($values) > 1 || $force_embed) {
         $output .= '{' . "\r\n";
       }
@@ -274,13 +340,24 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
     
     // Build the output.
     foreach ($values as $delta => $value) {
-      if ($cascade && !$force_embed) {
+      if ($cascade && !$force_embed && !$variable_hide) {
         $output .= $variable . ' = ';
       }
       elseif (count($values) > 1 || $force_embed) {
         $output .= chr(9);
       }
-      $output .= html_entity_decode($value) . "\r\n";
+      // Add value prefix
+      if ($value_prefix) {
+        $output .= $value_prefix;
+      }
+      $output .= html_entity_decode($value);
+      // Add value suffix
+      if ($value_suffix) {
+        $output .= $value_suffix;
+      }
+      if (!$value_no_new_line) {
+        $output .= "\r\n";
+      }
     }
     
     if ((count($values) > 1 && !$cascade) || $force_embed) {
