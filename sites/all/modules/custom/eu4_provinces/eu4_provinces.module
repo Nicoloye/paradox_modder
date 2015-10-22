@@ -48,7 +48,7 @@ function eu4_provinces_form_alter(&$form, &$form_state, $form_id) {
     );
     $form['eu4_contents']['provinces']['entries']['eu4_provinces_common_names'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Common names files : %path', array('%path' => '\common\province_names\[language].txt')),
+      '#title' => t('Common names files : %path', array('%path' => '\common\province_names\[culture or country].txt')),
       '#default_value' => $settings['eu4_provinces_common_names'], 
       '#weight' => 0,
     );
@@ -87,10 +87,15 @@ function eu4_provinces_preprocess(&$variables, $hook) {
           
           foreach ($fc->field_province_name[LANGUAGE_NONE] as $delta => $item) {
             $name = $item['value'];
-            $language = $fc->field_language[LANGUAGE_NONE][$delta]['taxonomy_term']->name;
-            $language = str_replace(' ', '_', strtolower($language));
+            if (!empty($fc->field_province_culture[LANGUAGE_NONE][$delta]['entity']->title)) {
+              $filename = $fc->field_province_culture[LANGUAGE_NONE][$delta]['entity']->title;
+              $filename = str_replace(' ', '_', strtolower($filename));
+            }
+            elseif (!empty($fc->field_province_country[LANGUAGE_NONE][$delta]['entity']->title)) {
+              $filename = $fc->field_province_country[LANGUAGE_NONE][$delta]['entity']->field_code[LANGUAGE_NONE][0]['value'];
+            }
             
-            $content[] = '<strong>\common\province_names\\' . $language . '.txt</strong><div class="content clearfix">' . $node->field_code[LANGUAGE_NONE][0]['value'] . ' = "' . $name . '"</div>';
+            $content[] = '<strong>\common\province_names\\' . $filename . '.txt</strong><div class="content clearfix">' . $node->field_code[LANGUAGE_NONE][0]['value'] . ' = "' . $name . '"</div>';
           }
         }
         $variables['content_eu4_provinces_common_names'] = implode('<br/>', $content);
@@ -144,21 +149,19 @@ function _eu4_provinces_prepare_batch($form, $form_state) {
       'error_message' => t('The process encountered an error.'),
     );
     
-    $query = db_select('node', 'n');
-    $query->fields('n', array('nid'));
-    $query->leftjoin('field_data_field_mod', 'fm', 'n.nid = fm.entity_id');
-    $query->leftjoin('field_data_field_country_category', 'fc', 'n.nid = fc.field_country_category_tid');
-    $query->fields('fc', array('field_country_category_tid'));
-    $query->leftjoin('taxonomy_term_data', 't', 'fc.field_country_category_tid = t.tid');
-    $query->fields('t', array('name', 'weight'));
-    $query->condition('fm.field_mod_target_id', $form_state['values']['mod']);
-    $query->condition('n.type', 'country');
-    $query->condition('n.status', 1);
-    $query->orderBy('t.weight', 'ASC');
-    $query->orderBy('t.name', 'ASC');
-    $query->orderBy('n.title', 'ASC');
-    
     if ($form_state['values']['eu4_provinces_history']) {
+      $query = db_select('node', 'n');
+      $query->fields('n', array('nid'));
+      $query->leftjoin('field_data_field_mod', 'fm', 'n.nid = fm.entity_id');
+      $query->leftjoin('field_data_field_province_category', 'fc', 'n.nid = fc.field_province_category_tid');
+      $query->leftjoin('taxonomy_term_data', 't', 'fc.field_province_category_tid = t.tid');
+      $query->condition('fm.field_mod_target_id', $form_state['values']['mod']);
+      $query->condition('n.type', 'province');
+      $query->condition('n.status', 1);
+      $query->orderBy('t.weight', 'ASC');
+      $query->orderBy('t.name', 'ASC');
+      $query->orderBy('n.title', 'ASC');
+    
       $index = 0;
       $results = $query->execute();
       $max = $results->rowCount();
@@ -171,20 +174,52 @@ function _eu4_provinces_prepare_batch($form, $form_state) {
     }
     
     if ($form_state['values']['eu4_provinces_common_names']) {
+      $query = db_select('node', 'n');
+      $query->fields('n', array('nid'));
+      $query->leftjoin('field_data_field_mod', 'fm', 'n.nid = fm.entity_id');
+      $query->leftjoin('field_data_field_code', 'fc', 'n.nid = fc.entity_id');
+      $query->fields('fc', array('field_code_value'));
+      // Field collection
+      $query->leftjoin('field_data_field_province_names', 'fpn', 'n.nid = fpn.entity_id');
+      $query->leftjoin('field_data_field_province_culture', 'fpcu', 'fpn.field_province_names_value = fpcu.entity_id');
+      $query->leftjoin('field_data_field_province_country', 'fpco', 'fpn.field_province_names_value = fpco.entity_id');
+      // Indirect values : title, code and name.
+      $query->leftjoin('node', 'ncu', 'ncu.nid = fpcu.field_province_culture_target_id');
+      $query->addField('ncu', 'title', 'culture');
+      $query->leftjoin('field_data_field_code', 'fcco', 'fcco.entity_id = fpco.field_province_country_target_id');
+      $query->addField('fcco', 'field_code_value', 'country');
+      $query->leftjoin('field_data_field_province_name', 'fn', 'fpn.field_province_names_value = fn.entity_id');
+      $query->addField('fn', 'field_province_name_value', 'name');
+      $query->condition('fm.field_mod_target_id', $form_state['values']['mod']);
+      $query->condition('n.type', 'province');
+      $query->condition('n.status', 1);
+      $query->orderBy('ncu.title', 'ASC');
+      $query->orderBy('fcco.field_code_value', 'ASC');
+      $query->orderBy('fc.field_code_value', 'ASC');
+      $query->orderBy('n.title', 'ASC');
+      
       $index = 0;
       $results = $query->execute();
       $max = $results->rowCount();
       $category = '';
       foreach($results as $result) {
-        // Detect group starts.
+        // Retrieve the right filename.        
+        if (!empty($result->culture)) {
+          $filename = str_replace(' ', '_', strtolower($result->culture));
+        }
+        elseif (!empty($result->country)) {
+          $filename = $result->country;
+        }
+        
+        // Detects group starts to properly initialize each file.
         $group = FALSE;
-        if ($category != $result->name || $index == 0) {
-          $category = $result->name;
+        if ($category != $filename) {
+          $category = $filename;
           $group = TRUE;
         }
         
         $batch['operations'][] = array(
-          '_eu4_provinces_batch', array($index, $max, $group, $result->nid, 'eu4_provinces_common_tags')
+          '_eu4_provinces_batch', array($index, $max, $group, $result->nid, 'eu4_provinces_common_names-' . $filename . '-' . $result->name)
         );
         $index++;
       }
@@ -202,50 +237,28 @@ function _eu4_provinces_batch($index, $max, $group, $nid, $build, &$context) {
   $error = FALSE;
   $node = node_load($nid);
   
-  switch($build) {
-    case 'eu4_provinces_history':
-      $path = '\history\countries\\' . $node->field_code[LANGUAGE_NONE][0]['value'] . ' - ' . $node->title . '.txt';
-      $file = _eu4_build_single_file($node, $build, $path, FALSE);
-      break;
-      
-    case 'eu4_provinces_common':
-      $path = '\common\countries\\' . $node->title . '.txt';
-      $file = _eu4_build_single_file($node, $build, $path, FALSE);
-      break;
-      
-    case 'eu4_provinces_common_colors':
-      $path = '\common\country_colors\00_country_colors.txt';
-      if ($index == 0) {
-        $content = "# Country unit colors.\r\n\r\n";
-        $file = _eu4_build_single_file($node, $build, $path, FALSE, $content);
-        $file = _eu4_build_single_file($node, $build, $path, TRUE);
-      }
-      else {
-        $file = _eu4_build_single_file($node, $build, $path, TRUE);
-      }
-      break;
+  if ($build == 'eu4_provinces_history') {
+    $path = '\history\provinces\\' . $node->field_code[LANGUAGE_NONE][0]['value'] . '-' . $node->title . '.txt';
+    $file = _eu4_build_single_file($node, $build, $path, FALSE, '#' . $node->title . "\r\n\r\n");
+    $file = _eu4_build_single_file($node, $build, $path, TRUE);
+  }
     
-    case 'eu4_provinces_common_tags':
-      $path = '\common\country_tags\00_countries.txt';
-      // Add the file beginning.
-      if ($index == 0) {
-        $content = "# Special countries..\r\nREB = \"countries/Rebels.txt\"\r\nPIR = \"countries/Pirates.txt\"\r\nNAT = \"countries/Natives.txt\"\r\n\r\n";
-        $file = _eu4_build_single_file($node, $build, $path, FALSE, $content);
-      }
-      // Add category if we reached a new group.
-      if ($group) {
-        if (!empty($node->field_country_category[LANGUAGE_NONE][0]['tid'])) {
-          $term = term_load($node->field_country_category[LANGUAGE_NONE][0]['tid']);
-          $content = '#' . $term->name . "\r\n";
-        }
-        else {
-          $content = "# ???\r\n";
-        }
-        $file = _eu4_build_single_file($node, $build, $path, TRUE, $content);
-      }
-      // Add the country entry.
-      $file = _eu4_build_single_file($node, $build, $path, TRUE);
-      break;
+  if (strpos($build, 'eu4_provinces_common_names') !== FALSE) {
+    $args = explode('-', $build);
+    $filename = $args[1];
+    $name = $args[2];
+    $path = '\common\province_names\\' . $filename . '.txt';
+    watchdog('debug', $path);
+    $content = $node->field_code[LANGUAGE_NONE][0]['value'] . ' = "' . $name . "\"\r\n";
+    
+    // If this is the first item for this file, initialize the file.
+    if ($group) {
+      $file = _eu4_build_single_file($node, $build, $path, FALSE, $content);
+    }
+    // Else append the content to the existing file.
+    else {
+      $file = _eu4_build_single_file($node, $build, $path, TRUE, $content);
+    }
   }
 }
 
@@ -254,7 +267,7 @@ function _eu4_provinces_batch($index, $max, $group, $nid, $build, &$context) {
  */
 function _eu4_provinces_batch_finished($success, $results, $operations) {
   if ($success) {
-    $message = t('Countries files and entries successfully processed');
+    $message = t('Provinces files and entries successfully processed');
   }
   // An error occurred.
   else {    

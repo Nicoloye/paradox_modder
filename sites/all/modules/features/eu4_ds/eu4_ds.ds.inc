@@ -344,10 +344,14 @@ function eu4_ds_ds_layout_settings_info() {
         35 => 'field_textile',
       ),
       'right' => array(
-        36 => 'field_province_names',
+        36 => 'field_province_category',
+        37 => 'field_province_names',
+      ),
+      'footer' => array(
+        38 => 'field_mod',
       ),
       'hidden' => array(
-        37 => '_add_existing_field',
+        39 => '_add_existing_field',
       ),
     ),
     'fields' => array(
@@ -387,7 +391,9 @@ function eu4_ds_ds_layout_settings_info() {
       'field_dock' => 'left',
       'field_constable' => 'left',
       'field_textile' => 'left',
+      'field_province_category' => 'right',
       'field_province_names' => 'right',
+      'field_mod' => 'footer',
       '_add_existing_field' => 'hidden',
     ),
     'classes' => array(),
