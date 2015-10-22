@@ -1,0 +1,10 @@
+name = EU4 Map
+description = Provides all required behaviors for EU4 map generation.
+core = 7.x
+version = 7.x-1.0
+package = EU4
+dependencies[] = eu4
+
+stylesheets[all][] = css/eu4_map.css
+scripts[] = js/eu4_map.js
+scripts[] = js/jquery.svg.pan.zoom.js
