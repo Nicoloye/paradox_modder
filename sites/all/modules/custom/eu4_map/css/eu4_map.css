@@ -22,6 +22,22 @@ svg g:hover path{
   fill: #eee;
 }
 
+svg g[selected="selected"] path {
+  stroke: #f00;
+  stroke-width: 6px;
+  fill: #fff;
+  fill-opacity: 0.5;
+}
+
+#province_selector {
+  background: #fff none repeat scroll 0 0;
+  border: 1px solid #999;
+  display: block;
+  height: 74px;
+  overflow: hidden;
+  width: 244px;
+}
+
 /**
  * Admin CSS
  */
@@ -44,4 +60,51 @@ body.page-node-add .ds-2col .field-widget-options-buttons .form-radios div {
 }
 body.page-node-add .ds-2col .field-widget-options-buttons .description {
   clear: both;
+}
+
+body.page-eu4-map-associate-province .content,
+#province_selector .content {
+  margin-top: 0;
+}
+
+body.page-eu4-map-associate-province .form-item,
+#province_selector .form-item {
+  margin-top: 0;
+}
+
+#province_selector #edit-submit {
+  margin-top: 21px;
+  margin-left: 10px;
+}
+
+#province_selector .form-item,
+#province_selector #edit-submit {
+  float: left;
+}
+
+body.page-eu4-map-associate-province input,
+#province_selector input {
+  margin: 0;
+  padding: 2px;
+}
+
+#province_selector div.description {
+  color: #666;
+  font-size: 0.923em;
+  line-height: 1.231em;
+  margin: 5px 0;
+  font: 75.3%/0.923em "Lucida Grande","Lucida Sans Unicode",sans-serif;
+}
+
+#province_selector .ajax-progress {
+  position: absolute;
+  right: 15px;
+  top: 1px;
+}
+
+#province_selector .ajax-progress .message {
+  font-size: 0.923em;
+  line-height: 1.231em;
+  margin: 5px 0;
+  font: 75.3%/0.923em "Lucida Grande","Lucida Sans Unicode",sans-serif;
 }

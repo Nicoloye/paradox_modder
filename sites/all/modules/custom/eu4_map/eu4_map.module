@@ -9,6 +9,19 @@
   * Implements hook_menu().
   */
 function eu4_map_menu() {
+  $items ['eu4-map/associate/province/%'] = array(
+    'title' => 'Associate province',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_eu4_map_associate_province_form', 3),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  $items ['eu4-map/provinces/autocomplete'] = array(
+    'page callback' => '_eu4_map_associate_province_autocomplete',
+    'page arguments' => array(3),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
   $items ['node/%node/definition'] = array(
     'title' => 'Definition',
     'page callback' => 'drupal_get_form',
@@ -249,6 +262,61 @@ function theme_eu4_map_map($variables) {
 }
 
 /**
+ * Custom form to associate colors to provinces.
+ */
+function _eu4_map_associate_province_form($form, &$form_state, $color) {
+  module_invoke('admin_menu', 'suppress');
+  
+  $form = array();
+  $form['province'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Province'),
+    '#autocomplete_path' => 'eu4-map/provinces/autocomplete',
+    '#size' => 20,
+    '#description' => t('Color !color', array('!color' => $color)),
+  );
+  $form['color'] = array(
+    '#type' => 'hidden',
+    '#value' => $color,
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('OK'),
+    '#ajax' => array(
+      'callback' => '_eu4_map_associate_province_form_submita',
+      'wrapper' => 'province_selector',
+      'method' => 'replace',
+      'effect' => 'fade',
+    ),
+  );
+  return $form;
+}
+
+function _eu4_map_associate_province_form_submit($form, &$form_state) {
+  
+}
+
+/**
+ * Custom autocomplete callback to get provinces entities.
+ */
+function _eu4_map_associate_province_autocomplete($string = '') {
+  $matches = array();
+  if ($string) {
+    $result = db_select('node')
+      ->fields('node', array('nid', 'title'))
+      ->condition('type', 'province')
+      ->condition('title', db_like($string) . '%', 'LIKE')
+      ->range(0, 10)
+      ->execute();
+    foreach ($result as $node) {
+      $matches[check_plain($node->title) . ' (' . $node->nid . ')'] = check_plain($node->title) . ' (' . $node->nid . ')';
+    }
+  }
+  
+  return drupal_json_output($matches);
+}
+
+/**
  * Custom provinces definition form.
  */
 function eu4_map_definition_form($form, &$form_state, $node) {
@@ -298,6 +366,7 @@ function eu4_map_definition_form($form, &$form_state, $node) {
       '#type' => 'textfield',
       '#title' => t('Name'),
       '#title_display' => 'invisible',
+      '#autocomplete_path' => 'user/autocomplete',
     ),
     'code' => array(
       '#type' => 'select',
