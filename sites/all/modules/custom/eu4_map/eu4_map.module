@@ -38,11 +38,11 @@ function eu4_map_menu() {
  * Implements hook_form_alter().
  */
 function eu4_map_form_alter(&$form, &$form_state, $form_id) {
-  if ($form_id == 'mod_node_form' && arg(2) == 'edit') {
-    if(!isset($form['#entity']->field_provinces_svg[LANGUAGE_NONE])) {
+  if ($form_id == 'map_node_form' && arg(2) == 'edit') {
+    if(!isset($form['#entity']->field_map_svg[LANGUAGE_NONE])) {
       $value = 'Build';
-      unset($form['field_provinces_colors']);
-      unset($form['field_provinces_svg']);
+      unset($form['field_map_colors']);
+      unset($form['field_map_svg']);
     } else {
       $value = 'Rebuild';
     }
@@ -63,7 +63,7 @@ function eu4_map_form_alter(&$form, &$form_state, $form_id) {
 function eu4_map_build_svg(&$form, &$form_state) {
   // Get the source image path.
   $node = $form_state['node'];
-  $source_image = file_create_url($node->field_provinces_map[LANGUAGE_NONE][0]['uri']);
+  $source_image = file_create_url($node->field_map[LANGUAGE_NONE][0]['uri']);
   
   // Get image size
   $size = getimagesize($source_image);
@@ -91,7 +91,7 @@ function eu4_map_build_svg(&$form, &$form_state) {
   $index['colors'] = $output;
   
   // Store index in the node.
-  $node->field_provinces_colors[LANGUAGE_NONE][0]['value'] = serialize($index);
+  $node->field_map_colors[LANGUAGE_NONE][0]['value'] = serialize($index);
   field_attach_update('node', $node);
   
   // Process batch to build the svg preview.
@@ -117,7 +117,7 @@ function eu4_map_build_svg(&$form, &$form_state) {
 function eu4_map_build_svg_batch_finished($success, $results, $operations) {
   if ($success) {
     $node = node_load($results['nid']);
-    $node->field_provinces_svg[LANGUAGE_NONE][0]['value'] = serialize($results['svg']);
+    $node->field_map_svg[LANGUAGE_NONE][0]['value'] = serialize($results['svg']);
     field_attach_update('node', $node);
 
     // Here we do something meaningful with the results.
@@ -245,8 +245,8 @@ function eu4_map_theme() {
 function theme_eu4_map_map($variables) {
   $node = $variables['node'];
   $output = '';
-  if (isset($node->field_provinces_svg[LANGUAGE_NONE])) {
-    $svg = unserialize($node->field_provinces_svg[LANGUAGE_NONE][0]['value']);
+  if (isset($node->field_map_svg[LANGUAGE_NONE])) {
+    $svg = unserialize($node->field_map_svg[LANGUAGE_NONE][0]['value']);
     $output = '<map><svg id="eu4_map" height="100%" width="100%" viewBox="' . $svg['viewBox'] . '" version="1.1">';
     foreach($svg['paths'] as $color => $path) {
       $output .= '<g id="'. $color .'" transform="' . $svg['transform'][$color] . '" >';
@@ -477,8 +477,8 @@ function theme_eu4_map_definition_form($variables) {
  */
 function _eu4_map_colors_get($node) {
   $colors = array();
-  if (isset($node->field_provinces_colors[LANGUAGE_NONE])) {
-    $index = unserialize($node->field_provinces_colors[LANGUAGE_NONE][0]['value']);
+  if (isset($node->field_map_colors[LANGUAGE_NONE])) {
+    $index = unserialize($node->field_map_colors[LANGUAGE_NONE][0]['value']);
     foreach($index['colors'] as $color) {
       if (isset($color[1])) {
         $key = str_replace(array('(', ')'), '', $color[1]);
