@@ -38,7 +38,7 @@
         $('#eu4_map', context).svgPanZoom({
             animationTime: 0,
             zoomFactor: 0.25,
-            maxZoom: 3,
+            maxZoom: 10,
             panFactor: 100,
             initialViewBox: {
               x: initial_viewBox.x,

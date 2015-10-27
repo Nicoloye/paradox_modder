@@ -219,7 +219,7 @@ function eu4_map_theme_registry_alter(&$theme_registry) {
  * Implements hook_preprocess_HOOK().
  */
 function eu4_map_preprocess(&$variables){
-  if(isset($variables['node']) && $variables['node']->type == 'mod') {
+  if(isset($variables['node']) && $variables['node']->type == 'map') {
     $node = $variables['node'];
     $variables['map'] = theme('eu4_map_map', array('node' => $node));
   }
