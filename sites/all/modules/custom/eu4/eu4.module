@@ -44,6 +44,8 @@ function eu4_field_formatter_info() {
         'add_line' => FALSE,
         'prefix' => '',
         'suffix' => '',
+        'prefix_add_line' => FALSE,
+        'suffix_add_line' => FALSE,
         'variable_hide' => FALSE,
         'value_no_new_line' => FALSE,
         'value_prefix' => '',
@@ -59,6 +61,8 @@ function eu4_field_formatter_info() {
         'add_line' => FALSE,
         'prefix' => '',
         'suffix' => '',
+        'prefix_add_line' => FALSE,
+        'suffix_add_line' => FALSE,
         'variable_hide' => FALSE,
         'value_no_new_line' => FALSE,
         'value_prefix' => '',
@@ -74,6 +78,8 @@ function eu4_field_formatter_info() {
         'add_line' => FALSE,
         'prefix' => '',
         'suffix' => '',
+        'prefix_add_line' => FALSE,
+        'suffix_add_line' => FALSE,
         'variable_hide' => FALSE,
         'value_no_new_line' => FALSE,
         'value_prefix' => '',
@@ -89,6 +95,8 @@ function eu4_field_formatter_info() {
         'add_line' => FALSE,
         'prefix' => '',
         'suffix' => '',
+        'prefix_add_line' => FALSE,
+        'suffix_add_line' => FALSE,
         'variable_hide' => FALSE,
         'value_no_new_line' => FALSE,
         'value_prefix' => '',
@@ -104,6 +112,8 @@ function eu4_field_formatter_info() {
         'add_line' => FALSE,
         'prefix' => '',
         'suffix' => '',
+        'prefix_add_line' => FALSE,
+        'suffix_add_line' => FALSE,
         'variable_hide' => FALSE,
         'value_no_new_line' => FALSE,
         'value_prefix' => '',
@@ -119,6 +129,8 @@ function eu4_field_formatter_info() {
         'add_line' => FALSE,
         'prefix' => '',
         'suffix' => '',
+        'prefix_add_line' => FALSE,
+        'suffix_add_line' => FALSE,
         'variable_hide' => FALSE,
         'value_no_new_line' => FALSE,
         'value_prefix' => '',
@@ -165,6 +177,18 @@ function eu4_field_formatter_settings_form($field, $instance, $view_mode, $form,
     '#title' => t('Suffix'),
     '#description' => t('Additional string to be displayed after the output.'),
     '#default_value'  => $settings['suffix'],
+  );
+  $element['prefix_add_line'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Prefix additional line'),
+    '#description' => t('Checking this will add a new line after this field prefix.'),
+    '#default_value'  => $settings['prefix_add_line'],
+  );
+  $element['suffix_add_line'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Suffix additional line'),
+    '#description' => t('Checking this will add a new line before this field suffix.'),
+    '#default_value'  => $settings['suffix_add_line'],
   );
   $element['variable_hide'] = array(
     '#type' => 'checkbox',
@@ -218,6 +242,12 @@ function eu4_field_formatter_settings_summary($field, $instance, $view_mode) {
   if ($settings['suffix']) {
     $summary .= t('Suffix set to "!suffix".', array('!suffix' => $settings['suffix'])) .'<br \>';
   }
+  if ($settings['prefix_add_line']) {
+    $summary .= t('Prefix additional line.') .'<br \>';
+  }
+  if ($settings['suffix_add_line']) {
+    $summary .= t('Suffix additional line.') .'<br \>';
+  }
   if ($settings['variable_hide']) {
     $summary .= t('Variable hidden.') .'<br \>';
   }
@@ -256,6 +286,8 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
   $add_line = $settings['add_line'];
   $prefix = $settings['prefix'];
   $suffix = $settings['suffix'];
+  $prefix_add_line = $settings['prefix_add_line'];
+  $suffix_add_line = $settings['suffix_add_line'];
   $variable_hide = $settings['variable_hide'];
   $value_no_new_line = $settings['value_no_new_line'];
   $value_prefix = $settings['value_prefix'];
@@ -364,9 +396,15 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
       $output .= '}' . "\r\n\r\n";
     }
     
-    // Add an additional new line if required.
+    // Add an additional new lines if required.
     if ($add_line) {
       $output .= "\r\n";
+    }
+    if ($prefix_add_line) {
+      $prefix .= "\r\n";
+    }
+    if ($suffix_add_line) {
+      $suffix = "\r\n" . $suffix;
     }
     
     $element[] = array('#markup' => $prefix . $output . $suffix);
