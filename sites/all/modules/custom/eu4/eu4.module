@@ -414,6 +414,88 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
 }
 
 /**
+ * Implements hook_field_group_formatter_info().
+ */
+function eu4_field_group_formatter_info() {
+  return array(
+    'display' => array(
+      'eu4_group_simple' => array(
+        'label' => t('EU4 simple field group'),
+        'description' => t('This fieldgroup renders the inner content in a fieldset with the title as legend.'),
+        'instance_settings' => array(
+          'group_opening' => '',
+          'group_closure' => '',
+          'add_line' => FALSE,
+        ),
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_group_format_settings().
+ */
+function eu4_field_group_format_settings($group) {
+  $form = array(
+    'instance_settings' => array(
+      '#tree' => TRUE,
+      '#weight' => 2,
+    ),
+  );
+  
+  $settings = $group->format_settings['instance_settings'];
+  $field_group_types = field_group_formatter_info();
+  $mode = $group->mode == 'form' ? 'form' : 'display';
+  $formatter = $field_group_types[$mode][$group->format_type];
+  
+  if ($group->format_type === 'eu4_group_simple') {
+    $form['instance_settings']['group_opening'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Group opening'),
+      '#description' => t('String to be displayed on the group opening.'),
+      '#default_value' => isset($settings['group_opening']) ? $settings['group_opening'] : $formatter['instance_settings']['group_opening'],
+    );
+    $form['instance_settings']['group_closure'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Group closure'),
+      '#description' => t('String to be displayed on the group closure.'),
+      '#default_value' => isset($settings['group_closure']) ? $settings['group_closure'] : $formatter['instance_settings']['group_closure'],
+    );
+    $form['instance_settings']['add_line'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Additional line'),
+      '#description' => t('Checking this will add a new line after this field group.'),
+      '#default_value'  => $settings['add_line'],
+    );
+  }
+  return $form;
+}
+
+/**
+ * Implements hook_field_group_pre_render().
+ */
+function eu4_field_group_pre_render(&$element, $group, &$form) {
+  $settings = $group->format_settings['instance_settings'];
+  
+  if ($group->format_type === 'eu4_group_simple') {
+    $add = array(
+      '#type' => 'markup',
+      '#weight' => $group->weight,
+    );
+    if (!empty($settings['group_opening'])){
+      $add['#prefix'] = $settings['group_opening'] . "\r\n";
+    }
+    if (!empty($settings['group_closure'])){
+      $add['#suffix'] = $settings['group_closure'] . "\r\n";
+    }
+    if (!empty($settings['add_line'])){
+      $add['#suffix'] .= "\r\n";
+    }
+    $element += $add;
+  }
+}
+
+/**
  * Implements hook_preprocess().
  */
 function eu4_preprocess(&$variables, $hook) {
@@ -457,6 +539,7 @@ function eu4_theme_registry_alter(&$theme_registry) {
  */
 function _eu4_clean_lua($string) {
   $string = str_replace(chr(9), '&nbsp;&nbsp;', render($string));
+  $string = str_replace(' ', '&nbsp;', render($string));
   $string = nl2br($string);
   return $string;
 }
