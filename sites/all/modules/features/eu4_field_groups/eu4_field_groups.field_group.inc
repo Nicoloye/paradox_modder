@@ -33,6 +33,7 @@ function eu4_field_groups_field_group_info() {
         'group_opening' => 'ai_will_do = {',
         'group_closure' => '}',
         'add_line' => 1,
+        'indent' => '1',
       ),
     ),
   );

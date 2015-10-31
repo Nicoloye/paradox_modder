@@ -50,10 +50,11 @@ function eu4_governments_preprocess(&$variables, $hook) {
     $bundle = $variables['elements']['#bundle'];
     $view_mode = $variables['elements']['#view_mode'];
     
+    $node = $variables['node'];
+    $variables['machine_name'] = $filename = str_replace(' ', '_', strtolower($node->title));
+    
     if ($bundle == 'government' && $view_mode == 'full') {
       // Build the full version of the node with each different view modes.
-      $node = $variables['node'];
-      
       $category = '';
       if (!empty($node->field_province_category[LANGUAGE_NONE][0]['tid'])) {
         $term = taxonomy_term_load($node->field_province_category[LANGUAGE_NONE][0]['tid']);
