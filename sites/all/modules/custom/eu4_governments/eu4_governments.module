@@ -1,0 +1,253 @@
+<?php
+
+/**
+ * @file
+ * Provides custom behaviors for EU4 governments.
+ */
+ 
+/**
+ * Implements hook_form_alter().
+ */
+function eu4_governments_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == '_eu4_contents_form') {
+    _eu4_contents_prepare_form($form);
+    $settings = variable_get('eu4_governments_build', array(
+      'eu4_governments_common' => FALSE,
+    ));
+    
+    $form['eu4_contents']['governments'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Governements'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#group' => 'eu4_contents',
+      '#weight' => 1,
+    );
+    
+    // Single entries.
+    $form['eu4_contents']['governments']['entries'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Single entries'),
+      '#collapsible' => FALSE,
+      '#weight' => 1,
+    );
+    $form['eu4_contents']['governments']['entries']['eu4_governments_common'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Common names files : %path', array('%path' => '\common\governments\00_governments.txt')),
+      '#default_value' => $settings['eu4_governments_common'], 
+      '#weight' => 0,
+    );
+    
+    $form['#submit'][] = '_eu4_governments_prepare_batch';
+  }
+}
+ 
+/**
+ * Implements hook_preprocess().
+ */
+function eu4_governments_preprocess(&$variables, $hook) {
+  if (array_key_exists($hook, entity_get_info())) {
+    $bundle = $variables['elements']['#bundle'];
+    $view_mode = $variables['elements']['#view_mode'];
+    
+    if ($bundle == 'government' && $view_mode == 'full') {
+      // Build the full version of the node with each different view modes.
+      $node = $variables['node'];
+      
+      $category = '';
+      if (!empty($node->field_province_category[LANGUAGE_NONE][0]['tid'])) {
+        $term = taxonomy_term_load($node->field_province_category[LANGUAGE_NONE][0]['tid']);
+      }
+      if (empty($term->name)) {
+        $category = 'no category';
+      }
+      else {
+        $category = '#' . $term->name . 'category';
+      }
+            
+      $view_modes = array(
+        'eu4_governments_common' => '<strong>Single entry under ' . $category . ' in <br>\common\governments\00_governments.txt</strong><div class="content clearfix">',
+      );
+      
+      foreach($view_modes as $view_mode => $content) {
+        $node_view = node_view($node, $view_mode);
+        $variables['content_' . $view_mode] = $content . _eu4_clean_lua(render($node_view)) . '</div>';
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function eu4_governments_theme_registry_alter(&$theme_registry) {
+    // Defined path to the current module.
+    $module_path = drupal_get_path('module', 'eu4_governments');
+    
+    // Find all .tpl.php files in this module's folder recursively.
+    $template_file_objects = drupal_find_theme_templates($theme_registry, '.tpl.php', $module_path .'/templates');
+    // Iterate through all found template file objects.
+    foreach ($template_file_objects as $key => $template_file_object) {
+      // If the template has not already been overridden by a theme.
+      if (!isset($theme_registry[$key]['theme path']) || !preg_match('#/themes/#', $theme_registry[$key]['theme path'])) {
+        // Alter the theme path and template elements.
+        $theme_registry[$key]['theme path'] = $module_path;
+        $theme_registry[$key] = array_merge($theme_registry[$key], $template_file_object);
+        $theme_registry[$key]['type'] = 'module';
+      }
+    }
+}
+
+/**
+ * Custom submit handler for the content generation form.
+ */
+function _eu4_governments_prepare_batch($form, $form_state) {
+  // Update settings.
+  $settings = array();
+  foreach ($form_state['values'] as $key => $value) {
+    if (strpos($key, 'eu4_governments_') !== FALSE) {
+      $settings[$key] = $value;
+    }
+  }
+  variable_set('eu4_governments_build', $settings);
+  
+  if ($form_state['values']['eu4_governments_history'] || $form_state['values']['eu4_governments_common_names']) {
+    // Prepare batch
+    $batch = array(
+      'operations' => array(),
+      'finished' => '_eu4_governments_batch_finished',
+      'title' => t('Building governments files & entries'),
+      'init_message' => t('Process is starting.'),
+      'progress_message' => t('Built @current governments files/entries out of @total.'),
+      'error_message' => t('The process encountered an error.'),
+    );
+    
+    if ($form_state['values']['eu4_governments_history']) {
+      $query = db_select('node', 'n');
+      $query->fields('n', array('nid'));
+      $query->leftjoin('field_data_field_mod', 'fm', 'n.nid = fm.entity_id');
+      $query->leftjoin('field_data_field_province_category', 'fc', 'n.nid = fc.field_province_category_tid');
+      $query->leftjoin('taxonomy_term_data', 't', 'fc.field_province_category_tid = t.tid');
+      $query->condition('fm.field_mod_target_id', $form_state['values']['mod']);
+      $query->condition('n.type', 'province');
+      $query->condition('n.status', 1);
+      $query->orderBy('t.weight', 'ASC');
+      $query->orderBy('t.name', 'ASC');
+      $query->orderBy('n.title', 'ASC');
+    
+      $index = 0;
+      $results = $query->execute();
+      $max = $results->rowCount();
+      foreach($results as $result) {
+        $batch['operations'][] = array(
+          '_eu4_governments_batch', array($index, $max, FALSE, $result->nid, 'eu4_governments_history')
+        );
+        $index++;
+      }
+    }
+    
+    if ($form_state['values']['eu4_governments_common_names']) {
+      $query = db_select('node', 'n');
+      $query->fields('n', array('nid'));
+      $query->leftjoin('field_data_field_mod', 'fm', 'n.nid = fm.entity_id');
+      $query->leftjoin('field_data_field_code', 'fc', 'n.nid = fc.entity_id');
+      $query->fields('fc', array('field_code_value'));
+      // Field collection
+      $query->leftjoin('field_data_field_province_names', 'fpn', 'n.nid = fpn.entity_id');
+      $query->leftjoin('field_data_field_province_culture', 'fpcu', 'fpn.field_province_names_value = fpcu.entity_id');
+      $query->leftjoin('field_data_field_province_country', 'fpco', 'fpn.field_province_names_value = fpco.entity_id');
+      // Indirect values : title, code and name.
+      $query->leftjoin('node', 'ncu', 'ncu.nid = fpcu.field_province_culture_target_id');
+      $query->addField('ncu', 'title', 'culture');
+      $query->leftjoin('field_data_field_code', 'fcco', 'fcco.entity_id = fpco.field_province_country_target_id');
+      $query->addField('fcco', 'field_code_value', 'country');
+      $query->leftjoin('field_data_field_province_name', 'fn', 'fpn.field_province_names_value = fn.entity_id');
+      $query->addField('fn', 'field_province_name_value', 'name');
+      $query->condition('fm.field_mod_target_id', $form_state['values']['mod']);
+      $query->condition('n.type', 'province');
+      $query->condition('n.status', 1);
+      $query->orderBy('ncu.title', 'ASC');
+      $query->orderBy('fcco.field_code_value', 'ASC');
+      $query->orderBy('fc.field_code_value', 'ASC');
+      $query->orderBy('n.title', 'ASC');
+      
+      $index = 0;
+      $results = $query->execute();
+      $max = $results->rowCount();
+      $category = '';
+      foreach($results as $result) {
+        // Retrieve the right filename.        
+        if (!empty($result->culture)) {
+          $filename = str_replace(' ', '_', strtolower($result->culture));
+        }
+        elseif (!empty($result->country)) {
+          $filename = $result->country;
+        }
+        
+        // Detects group starts to properly initialize each file.
+        $group = FALSE;
+        if ($category != $filename) {
+          $category = $filename;
+          $group = TRUE;
+        }
+        
+        $batch['operations'][] = array(
+          '_eu4_governments_batch', array($index, $max, $group, $result->nid, 'eu4_governments_common_names-' . $filename . '-' . $result->name)
+        );
+        $index++;
+      }
+    }
+    
+    // Set batch.
+    batch_set($batch);
+  }
+}
+
+/**
+ * Batch callback.
+ */
+function _eu4_governments_batch($index, $max, $group, $nid, $build, &$context) {
+  $error = FALSE;
+  $node = node_load($nid);
+  
+  if ($build == 'eu4_governments_history') {
+    $path = '\history\governments\\' . $node->field_code[LANGUAGE_NONE][0]['value'] . '-' . $node->title . '.txt';
+    $file = _eu4_build_single_file($node, $build, $path, FALSE, '#' . $node->title . "\r\n\r\n");
+    $file = _eu4_build_single_file($node, $build, $path, TRUE);
+  }
+    
+  if (strpos($build, 'eu4_governments_common_names') !== FALSE) {
+    $args = explode('-', $build);
+    $filename = $args[1];
+    $name = $args[2];
+    $path = '\common\province_names\\' . $filename . '.txt';
+    watchdog('debug', $path);
+    $content = $node->field_code[LANGUAGE_NONE][0]['value'] . ' = "' . $name . "\"\r\n";
+    
+    // If this is the first item for this file, initialize the file.
+    if ($group) {
+      $file = _eu4_build_single_file($node, $build, $path, FALSE, $content);
+    }
+    // Else append the content to the existing file.
+    else {
+      $file = _eu4_build_single_file($node, $build, $path, TRUE, $content);
+    }
+  }
+}
+
+/**
+ * Batch 'finished' callback
+ */
+function _eu4_governments_batch_finished($success, $results, $operations) {
+  if ($success) {
+    $message = t('Governments files and entries successfully processed');
+  }
+  // An error occurred.
+  else {    
+    $error_operation = reset($operations);
+    $message = t('An error occurred while processing %error_operation with arguments: @arguments', array('%error_operation' => $error_operation[0], '@arguments' => print_r($error_operation[1], TRUE)));
+  }
+  drupal_set_message($message);
+}
+
+
