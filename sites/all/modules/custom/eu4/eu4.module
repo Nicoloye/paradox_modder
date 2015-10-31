@@ -42,6 +42,8 @@ function eu4_field_formatter_info() {
         'cascade' => FALSE,
         'force_embed' => FALSE,
         'add_line' => FALSE,
+        'add_line_before' => FALSE,
+        'indent' => '',
         'prefix' => '',
         'suffix' => '',
         'prefix_add_line' => FALSE,
@@ -59,6 +61,8 @@ function eu4_field_formatter_info() {
         'cascade' => FALSE,
         'force_embed' => FALSE,
         'add_line' => FALSE,
+        'add_line_before' => FALSE,
+        'indent' => '',
         'prefix' => '',
         'suffix' => '',
         'prefix_add_line' => FALSE,
@@ -76,6 +80,8 @@ function eu4_field_formatter_info() {
         'cascade' => FALSE,
         'force_embed' => FALSE,
         'add_line' => FALSE,
+        'add_line_before' => FALSE,
+        'indent' => '',
         'prefix' => '',
         'suffix' => '',
         'prefix_add_line' => FALSE,
@@ -93,6 +99,8 @@ function eu4_field_formatter_info() {
         'cascade' => FALSE,
         'force_embed' => FALSE,
         'add_line' => FALSE,
+        'add_line_before' => FALSE,
+        'indent' => '',
         'prefix' => '',
         'suffix' => '',
         'prefix_add_line' => FALSE,
@@ -110,6 +118,8 @@ function eu4_field_formatter_info() {
         'cascade' => FALSE,
         'force_embed' => FALSE,
         'add_line' => FALSE,
+        'add_line_before' => FALSE,
+        'indent' => '',
         'prefix' => '',
         'suffix' => '',
         'prefix_add_line' => FALSE,
@@ -127,6 +137,8 @@ function eu4_field_formatter_info() {
         'cascade' => FALSE,
         'force_embed' => FALSE,
         'add_line' => FALSE,
+        'add_line_before' => FALSE,
+        'indent' => '',
         'prefix' => '',
         'suffix' => '',
         'prefix_add_line' => FALSE,
@@ -165,6 +177,19 @@ function eu4_field_formatter_settings_form($field, $instance, $view_mode, $form,
     '#title' => t('Additional line'),
     '#description' => t('Checking this will add a new line after this field output.'),
     '#default_value'  => $settings['add_line'],
+  );
+  $element['add_line_before'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Additional line before'),
+    '#description' => t('Checking this will add a new line before this field output.'),
+    '#default_value'  => $settings['add_line_before'],
+  );
+  $element['indent'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Indentation'),
+    '#description' => t('Number of spaces to add before each lines of the output.'),
+    '#default_value'  => $settings['indent'],
+    '#size' => 4,
   );
   $element['prefix'] = array(
     '#type' => 'textfield',
@@ -236,6 +261,12 @@ function eu4_field_formatter_settings_summary($field, $instance, $view_mode) {
   if ($settings['add_line']) {
     $summary .= t('Additional line.') .'<br \>';
   }
+  if ($settings['add_line_before']) {
+    $summary .= t('Additional line before.') .'<br \>';
+  }
+  if ($settings['indent']) {
+    $summary .= t('Content indented by !indentation.', array('!indentation' => $settings['indent'])) .'<br \>';
+  }
   if ($settings['prefix']) {
     $summary .= t('Prefix set to "!prefix".', array('!prefix' => $settings['prefix'])) .'<br \>';
   }
@@ -284,6 +315,7 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
   $cascade = $settings['cascade'];
   $force_embed = $settings['force_embed'];
   $add_line = $settings['add_line'];
+  $add_line_before = $settings['add_line_before'];
   $prefix = $settings['prefix'];
   $suffix = $settings['suffix'];
   $prefix_add_line = $settings['prefix_add_line'];
@@ -295,6 +327,13 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
   $variable = str_replace(' ', '_', strtolower($instance['label']));
   $output = '';
   $values = array();
+  // Calculate indentation (required for field groups values).
+  $indent = '';
+  if (!empty($settings['indent'])) {
+    for($i = 0; $i < $settings['indent']; $i++) {
+      $indent .= chr(9);
+    }
+  }
   
   switch ($display['type']) {
     // Simple fields.
@@ -363,7 +402,7 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
     // Multiple valued field.
     if (!$cascade) {
       if (!$variable_hide) {
-        $output = $variable . ' = ';
+        $output = $indent . $variable . ' = ';
       }
       if (count($values) > 1 || $force_embed) {
         $output .= '{' . "\r\n";
@@ -373,11 +412,15 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
     // Build the output.
     foreach ($values as $delta => $value) {
       if ($cascade && !$force_embed && !$variable_hide) {
-        $output .= $variable . ' = ';
+        $output .= $indent . $variable . ' = ';
       }
       elseif (count($values) > 1 || $force_embed) {
-        $output .= chr(9);
+        $output .= $indent . chr(9);
       }
+      elseif ($variable_hide) {
+        $output = $indent . $output;
+      }
+      
       // Add value prefix
       if ($value_prefix) {
         $output .= $value_prefix;
@@ -399,6 +442,9 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
     // Add an additional new lines if required.
     if ($add_line) {
       $output .= "\r\n";
+    }
+    if ($add_line_before) {
+      $prefix = "\r\n" . $prefix;
     }
     if ($prefix_add_line) {
       $prefix .= "\r\n";
