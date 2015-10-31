@@ -14,6 +14,7 @@ features[ds_view_modes][] = eu4_countries_common
 features[ds_view_modes][] = eu4_countries_common_colors
 features[ds_view_modes][] = eu4_countries_common_tags
 features[ds_view_modes][] = eu4_countries_history
+features[ds_view_modes][] = eu4_governments_common
 features[ds_view_modes][] = eu4_provinces_history
 features[features_api][] = api:2
 project path = sites/all/modules/features

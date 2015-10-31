@@ -13,6 +13,34 @@ function eu4_field_groups_field_group_info() {
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
   $field_group->api_version = 1;
+  $field_group->identifier = 'group_ai_will_do|node|government|eu4_governments_common';
+  $field_group->group_name = 'group_ai_will_do';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'government';
+  $field_group->mode = 'eu4_governments_common';
+  $field_group->parent_name = '';
+  $field_group->data = array(
+    'label' => 'AI will do',
+    'weight' => '24',
+    'children' => array(
+      0 => 'field_factor',
+      1 => 'field_modifier',
+    ),
+    'format_type' => 'eu4_group_simple',
+    'format_settings' => array(
+      'label' => 'AI will do',
+      'instance_settings' => array(
+        'group_opening' => 'ai_will_do = {',
+        'group_closure' => '}',
+        'add_line' => 1,
+      ),
+    ),
+  );
+  $export['group_ai_will_do|node|government|eu4_governments_common'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
   $field_group->identifier = 'group_ai_will_do|node|government|form';
   $field_group->group_name = 'group_ai_will_do';
   $field_group->entity_type = 'node';
@@ -21,7 +49,7 @@ function eu4_field_groups_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'AI will do',
-    'weight' => '26',
+    'weight' => '25',
     'children' => array(
       0 => 'field_factor',
       1 => 'field_modifier',

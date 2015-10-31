@@ -7,6 +7,7 @@ dependencies[] = features
 dependencies[] = field_group
 features[ctools][] = field_group:field_group:1
 features[features_api][] = api:2
+features[field_group][] = group_ai_will_do|node|government|eu4_governments_common
 features[field_group][] = group_ai_will_do|node|government|form
 features[field_group][] = group_modifier|node|faction|form
 features[field_group][] = group_unit_colors|node|country|form

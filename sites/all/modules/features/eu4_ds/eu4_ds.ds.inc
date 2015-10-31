@@ -240,11 +240,12 @@ function eu4_ds_ds_layout_settings_info() {
         29 => 'field_faction',
       ),
       'right' => array(
-        30 => 'field_government_bonus',
-        31 => 'field_government_malus',
+        30 => 'field_government_category',
+        31 => 'field_government_bonus',
+        32 => 'field_government_malus',
       ),
       'hidden' => array(
-        32 => '_add_existing_field',
+        33 => '_add_existing_field',
       ),
     ),
     'fields' => array(
@@ -278,6 +279,7 @@ function eu4_ds_ds_layout_settings_info() {
       'group_ai_will_do' => 'left',
       'field_ai_importance' => 'left',
       'field_faction' => 'left',
+      'field_government_category' => 'right',
       'field_government_bonus' => 'right',
       'field_government_malus' => 'right',
       '_add_existing_field' => 'hidden',
@@ -465,6 +467,15 @@ function eu4_ds_ds_view_modes_info() {
     'node' => 'node',
   );
   $export['eu4_countries_history'] = $ds_view_mode;
+
+  $ds_view_mode = new stdClass();
+  $ds_view_mode->api_version = 1;
+  $ds_view_mode->view_mode = 'eu4_governments_common';
+  $ds_view_mode->label = 'Governments - Common';
+  $ds_view_mode->entities = array(
+    'node' => 'node',
+  );
+  $export['eu4_governments_common'] = $ds_view_mode;
 
   $ds_view_mode = new stdClass();
   $ds_view_mode->api_version = 1;
