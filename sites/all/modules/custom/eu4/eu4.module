@@ -472,6 +472,7 @@ function eu4_field_group_formatter_info() {
           'group_opening' => '',
           'group_closure' => '',
           'add_line' => FALSE,
+          'indent' => '',
         ),
       ),
     ),
@@ -513,6 +514,13 @@ function eu4_field_group_format_settings($group) {
       '#description' => t('Checking this will add a new line after this field group.'),
       '#default_value'  => $settings['add_line'],
     );
+    $form['instance_settings']['indent'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Indentation'),
+    '#description' => t('Number of spaces to add before each lines of the output.'),
+    '#default_value'  => $settings['indent'],
+    '#size' => 4,
+  );
   }
   return $form;
 }
@@ -528,11 +536,17 @@ function eu4_field_group_pre_render(&$element, $group, &$form) {
       '#type' => 'markup',
       '#weight' => $group->weight,
     );
+    $indent = '';
+    if (!empty($settings['indent'])){
+      for($i = 0; $i < $settings['indent']; $i++) {
+        $indent .= chr(9);
+      }
+    }
     if (!empty($settings['group_opening'])){
-      $add['#prefix'] = $settings['group_opening'] . "\r\n";
+      $add['#prefix'] = $indent . $settings['group_opening'] . "\r\n";
     }
     if (!empty($settings['group_closure'])){
-      $add['#suffix'] = $settings['group_closure'] . "\r\n";
+      $add['#suffix'] = $indent . $settings['group_closure'] . "\r\n";
     }
     if (!empty($settings['add_line'])){
       $add['#suffix'] .= "\r\n";
