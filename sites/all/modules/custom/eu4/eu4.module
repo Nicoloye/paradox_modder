@@ -34,120 +34,52 @@ function eu4_menu() {
  * Implements hook_field_formatter_info().
  */
 function eu4_field_formatter_info() {
+  $settings = array(
+    'cascade' => FALSE,
+    'force_embed' => FALSE,
+    'add_line' => FALSE,
+    'add_line_before' => FALSE,
+    'indent' => '',
+    'prefix' => '',
+    'suffix' => '',
+    'prefix_add_line' => FALSE,
+    'suffix_add_line' => FALSE,
+    'variable_hide' => FALSE,
+    'value_clean' => FALSE,
+    'value_no_new_line' => FALSE,
+    'value_prefix' => '',
+    'value_suffix' => '',
+  );
   return array(
     'eu4_simple_field' => array(
       'label' => t('EU4 simple field'),
       'field types' => array('title', 'text', 'text_long', 'number_float', 'number_integer', 'list_text', 'list_boolean'),
-      'settings'  => array(
-        'cascade' => FALSE,
-        'force_embed' => FALSE,
-        'add_line' => FALSE,
-        'add_line_before' => FALSE,
-        'indent' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'prefix_add_line' => FALSE,
-        'suffix_add_line' => FALSE,
-        'variable_hide' => FALSE,
-        'value_no_new_line' => FALSE,
-        'value_prefix' => '',
-        'value_suffix' => '',
-      ),
+      'settings'  => $settings,
     ),
     'eu4_entity_title' => array(
       'label' => t('EU4 entity title'),
       'field types' => array('entityreference'),
-      'settings'  => array(
-        'cascade' => FALSE,
-        'force_embed' => FALSE,
-        'add_line' => FALSE,
-        'add_line_before' => FALSE,
-        'indent' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'prefix_add_line' => FALSE,
-        'suffix_add_line' => FALSE,
-        'variable_hide' => FALSE,
-        'value_no_new_line' => FALSE,
-        'value_prefix' => '',
-        'value_suffix' => '',
-      ),
+      'settings'  => $settings,
     ),
     'eu4_entity_code' => array(
       'label' => t('EU4 entity code'),
       'field types' => array('entityreference'),
-      'settings'  => array(
-        'cascade' => FALSE,
-        'force_embed' => FALSE,
-        'add_line' => FALSE,
-        'add_line_before' => FALSE,
-        'indent' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'prefix_add_line' => FALSE,
-        'suffix_add_line' => FALSE,
-        'variable_hide' => FALSE,
-        'value_no_new_line' => FALSE,
-        'value_prefix' => '',
-        'value_suffix' => '',
-      ),
+      'settings'  => $settings,
     ),
     'eu4_entity_code_title' => array(
       'label' => t('EU4 entity code with title in comment'),
       'field types' => array('entityreference'),
-      'settings'  => array(
-        'cascade' => FALSE,
-        'force_embed' => FALSE,
-        'add_line' => FALSE,
-        'add_line_before' => FALSE,
-        'indent' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'prefix_add_line' => FALSE,
-        'suffix_add_line' => FALSE,
-        'variable_hide' => FALSE,
-        'value_no_new_line' => FALSE,
-        'value_prefix' => '',
-        'value_suffix' => '',
-      ),
+      'settings'  => $settings,
     ),
     'eu4_color_rgb' => array(
       'label' => t('EU4 RGB color'),
       'field types' => array('jquery_colorpicker'),
-      'settings'  => array(
-        'cascade' => FALSE,
-        'force_embed' => FALSE,
-        'add_line' => FALSE,
-        'add_line_before' => FALSE,
-        'indent' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'prefix_add_line' => FALSE,
-        'suffix_add_line' => FALSE,
-        'variable_hide' => FALSE,
-        'value_no_new_line' => FALSE,
-        'value_prefix' => '',
-        'value_suffix' => '',
-      ),
+      'settings'  => $settings,
     ),
     'eu4_fc_simple' => array(
       'label' => t('EU4 simple field collection'),
       'field types' => array('field_collection'),
-      'settings'  => array(
-        'cascade' => FALSE,
-        'force_embed' => FALSE,
-        'add_line' => FALSE,
-        'add_line_before' => FALSE,
-        'indent' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'prefix_add_line' => FALSE,
-        'suffix_add_line' => FALSE,
-        'variable_hide' => FALSE,
-        'value_no_new_line' => FALSE,
-        'value_prefix' => '',
-        'value_suffix' => '',
-      ),
+      'settings'  => $settings,
     ),
   );
 }
@@ -221,6 +153,12 @@ function eu4_field_formatter_settings_form($field, $instance, $view_mode, $form,
     '#description' => t('Checking this will only display the field value.'),
     '#default_value'  => $settings['variable_hide'],
   );
+  $element['value_clean'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Clean value output'),
+    '#description' => t('Checking this will transform the value to machine value.'),
+    '#default_value'  => $settings['value_clean'],
+  );
   $element['value_no_new_line'] = array(
     '#type' => 'checkbox',
     '#title' => t('No new line after value'),
@@ -282,6 +220,9 @@ function eu4_field_formatter_settings_summary($field, $instance, $view_mode) {
   if ($settings['variable_hide']) {
     $summary .= t('Variable hidden.') .'<br \>';
   }
+  if ($settings['value_clean']) {
+    $summary .= t('Value cleaned before output.') .'<br \>';
+  }
   if ($settings['value_no_new_line']) {
     $summary .= t('No new line after value.') .'<br \>';
   }
@@ -321,6 +262,7 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
   $prefix_add_line = $settings['prefix_add_line'];
   $suffix_add_line = $settings['suffix_add_line'];
   $variable_hide = $settings['variable_hide'];
+  $value_clean = $settings['value_clean'];
   $value_no_new_line = $settings['value_no_new_line'];
   $value_prefix = $settings['value_prefix'];
   $value_suffix = $settings['value_suffix'];
@@ -428,6 +370,9 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
       // Special process, indent all lines coming from field with multiple lines.
       if ($field['type'] == 'text_long') {
         $value = str_replace("\r\n", "\r\n" . $indent, $value);
+      }
+      if ($value_clean) {
+        $value = str_replace(' ', '_', strtolower($value));
       }
       $output .= html_entity_decode($value);
       // Add value suffix
