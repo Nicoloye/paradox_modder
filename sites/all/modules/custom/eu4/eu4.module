@@ -425,6 +425,10 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
       if ($value_prefix) {
         $output .= $value_prefix;
       }
+      // Special process, indent all lines coming from field with multiple lines.
+      if ($field['type'] == 'text_long') {
+        $value = str_replace("\r\n", "\r\n" . $indent, $value);
+      }
       $output .= html_entity_decode($value);
       // Add value suffix
       if ($value_suffix) {
