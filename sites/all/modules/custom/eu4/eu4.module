@@ -436,7 +436,7 @@ function eu4_field_formatter_view($entity_type, $entity, $field, $instance, $lan
     }
     
     if ((count($values) > 1 && !$cascade) || $force_embed) {
-      $output .= '}' . "\r\n\r\n";
+      $output .= $indent . '}' . "\r\n\r\n";
     }
     
     // Add an additional new lines if required.
