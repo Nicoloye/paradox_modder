@@ -11,4 +11,5 @@ features[taxonomy][] = factions
 features[taxonomy][] = governments
 features[taxonomy][] = ideas
 features[taxonomy][] = languages
+features[taxonomy][] = trade_winds
 project path = sites/all/modules/features

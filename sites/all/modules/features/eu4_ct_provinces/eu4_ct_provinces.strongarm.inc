@@ -101,6 +101,15 @@ function eu4_ct_provinces_strongarm() {
       'eu4_provinces_history' => array(
         'custom_settings' => TRUE,
       ),
+      'eu4_provinces_map_climate' => array(
+        'custom_settings' => TRUE,
+      ),
+      'eu4_provinces_map_trade_winds' => array(
+        'custom_settings' => FALSE,
+      ),
+      'eu4_governments_common' => array(
+        'custom_settings' => FALSE,
+      ),
     ),
     'extra_fields' => array(
       'form' => array(

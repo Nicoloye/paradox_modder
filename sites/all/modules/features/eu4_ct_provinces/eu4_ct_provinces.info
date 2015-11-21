@@ -57,6 +57,7 @@ features[field_instance][] = node-province-field_textile
 features[field_instance][] = node-province-field_trade_depot
 features[field_instance][] = node-province-field_trade_goods
 features[field_instance][] = node-province-field_trade_winds
+features[field_instance][] = node-province-field_trade_winds_category
 features[field_instance][] = node-province-field_university
 features[field_instance][] = node-province-field_unrest
 features[field_instance][] = node-province-field_workshop

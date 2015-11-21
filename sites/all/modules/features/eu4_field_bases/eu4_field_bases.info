@@ -165,6 +165,7 @@ features[field_base][] = field_trade_depot
 features[field_base][] = field_trade_efficiency
 features[field_base][] = field_trade_goods
 features[field_base][] = field_trade_winds
+features[field_base][] = field_trade_winds_category
 features[field_base][] = field_tribal
 features[field_base][] = field_unit_type
 features[field_base][] = field_university

@@ -351,13 +351,14 @@ function eu4_ds_ds_layout_settings_info() {
         36 => 'field_province_category',
         37 => 'field_climate',
         38 => 'field_trade_winds',
-        39 => 'field_province_names',
+        39 => 'field_trade_winds_category',
+        40 => 'field_province_names',
       ),
       'footer' => array(
-        40 => 'field_mod',
+        41 => 'field_mod',
       ),
       'hidden' => array(
-        41 => '_add_existing_field',
+        42 => '_add_existing_field',
       ),
     ),
     'fields' => array(
@@ -400,6 +401,7 @@ function eu4_ds_ds_layout_settings_info() {
       'field_province_category' => 'right',
       'field_climate' => 'right',
       'field_trade_winds' => 'right',
+      'field_trade_winds_category' => 'right',
       'field_province_names' => 'right',
       'field_mod' => 'footer',
       '_add_existing_field' => 'hidden',

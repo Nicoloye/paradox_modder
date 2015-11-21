@@ -4,5 +4,6 @@ package = EU4 - Settings
 version = 7.x-1.0
 dependencies[] = conditional_fields
 features[conditional_fields][] = field_collection_item:field_province_names
+features[conditional_fields][] = node:province
 features[features_api][] = api:2
 project path = sites/all/modules/features

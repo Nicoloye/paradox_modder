@@ -1,5 +1,5 @@
 .node-province.node-full {
-  display: inline-block;
+  float: left;
   padding: 10px;
   border: 1px solid #bbb;
   margin: 2px;

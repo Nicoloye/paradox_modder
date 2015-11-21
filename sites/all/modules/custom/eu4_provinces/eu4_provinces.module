@@ -14,6 +14,8 @@ function eu4_provinces_form_alter(&$form, &$form_state, $form_id) {
     $settings = variable_get('eu4_provinces_build', array(
       'eu4_provinces_history' => TRUE,
       'eu4_provinces_common_names' => TRUE,
+      'eu4_provinces_map_climate' => TRUE,
+      'eu4_provinces_map_trade_winds' => TRUE,
     ));
     
     $form['eu4_contents']['provinces'] = array(
@@ -52,6 +54,18 @@ function eu4_provinces_form_alter(&$form, &$form_state, $form_id) {
       '#default_value' => $settings['eu4_provinces_common_names'], 
       '#weight' => 0,
     );
+    $form['eu4_contents']['provinces']['entries']['eu4_provinces_map_climate'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Map climate file : %path', array('%path' => '\map\climate.txt')),
+      '#default_value' => $settings['eu4_provinces_map_climate'], 
+      '#weight' => 1,
+    );
+    $form['eu4_contents']['provinces']['entries']['eu4_provinces_map_trade_winds'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Map trade winds file : %path', array('%path' => '\map\trade_winds.txt')),
+      '#default_value' => $settings['eu4_provinces_map_trade_winds'], 
+      '#weight' => 2,
+    );
     
     $form['#submit'][] = '_eu4_provinces_prepare_batch';
   }
@@ -76,6 +90,43 @@ function eu4_provinces_preprocess(&$variables, $hook) {
       foreach($view_modes as $view_mode => $content) {
         $node_view = node_view($node, $view_mode);
         $variables['content_' . $view_mode] = $content . _eu4_clean_lua(render($node_view)) . '</div>';
+      }
+      
+      // Map climate.
+      if (!empty($node->field_climate[LANGUAGE_NONE])) {
+        $content = array();
+        $climate = taxonomy_term_load($node->field_climate[LANGUAGE_NONE][0]['tid']);
+        if (!empty($node->field_province_category[LANGUAGE_NONE][0]['tid'])) {
+          $term = taxonomy_term_load($node->field_province_category[LANGUAGE_NONE][0]['tid']);
+        }
+        if (empty($term->name)) {
+          $category = 'no category';
+          $category_name = '# ???';
+        }
+        else {
+          $category = '#' . $term->name . ' category';
+          $category_name = '#' . $term->name;
+        }
+        
+        $content[] = '<strong>Single entry under ' . $category . '<br />in \map\climate.txt</strong><div class="content clearfix">' . str_replace(' ', '_', strtolower($climate->name)) . ' = {<br />&nbsp;&nbsp;' . $category_name . '<br />&nbsp;&nbsp;' . $node->field_code[LANGUAGE_NONE][0]['value'] . '&nbsp;...<br/>}</div>';
+        $variables['content_eu4_provinces_map_climate'] = implode('<br/>', $content);
+      }
+      
+      // Map trade winds.
+      if (!empty($node->field_trade_winds[LANGUAGE_NONE])) {
+        $content = array();
+        if (!empty($node->field_trade_winds_category[LANGUAGE_NONE][0]['tid'])) {
+          $term = taxonomy_term_load($node->field_trade_winds_category[LANGUAGE_NONE][0]['tid']);
+        }
+        if (empty($term->name)) {
+          $category = 'no category';
+        }
+        else {
+          $category = '#' . $term->name . ' category';
+        }
+        
+        $content[] = '<strong>Single entry under ' . $category . '<br />in \map\trade_winds.txt</strong><div class="content clearfix">' . $node->field_code[LANGUAGE_NONE][0]['value'] . ' = ' . $node->field_trade_winds[LANGUAGE_NONE][0]['value'] . '</div>';
+        $variables['content_eu4_provinces_map_trade_winds'] = implode('<br/>', $content);
       }
       
       // Specific case for the provinces' names, each entry is in a different file.
