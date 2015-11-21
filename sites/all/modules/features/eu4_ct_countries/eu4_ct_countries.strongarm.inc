@@ -98,6 +98,12 @@ function eu4_ct_countries_strongarm() {
       'diff_standard' => array(
         'custom_settings' => FALSE,
       ),
+      'eu4_governments_common' => array(
+        'custom_settings' => FALSE,
+      ),
+      'eu4_provinces_history' => array(
+        'custom_settings' => FALSE,
+      ),
     ),
     'extra_fields' => array(
       'form' => array(

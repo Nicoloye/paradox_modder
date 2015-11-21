@@ -9,6 +9,29 @@
  */
 function eu4_vocabularies_taxonomy_default_vocabularies() {
   return array(
+    'climates' => array(
+      'name' => 'Climates',
+      'machine_name' => 'climates',
+      'description' => '',
+      'hierarchy' => 0,
+      'module' => 'taxonomy',
+      'weight' => 0,
+      'rdf_mapping' => array(
+        'rdftype' => array(
+          0 => 'skos:ConceptScheme',
+        ),
+        'name' => array(
+          'predicates' => array(
+            0 => 'dc:title',
+          ),
+        ),
+        'description' => array(
+          'predicates' => array(
+            0 => 'rdfs:comment',
+          ),
+        ),
+      ),
+    ),
     'countries' => array(
       'name' => 'Countries',
       'machine_name' => 'countries',

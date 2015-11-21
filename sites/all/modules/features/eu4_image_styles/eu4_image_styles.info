@@ -1,0 +1,8 @@
+name = EU4 - Image styles
+core = 7.x
+package = EU4 - Settings
+version = 7.x-1.0
+dependencies[] = image
+features[features_api][] = api:2
+features[image][] = flag
+project path = sites/all/modules/features

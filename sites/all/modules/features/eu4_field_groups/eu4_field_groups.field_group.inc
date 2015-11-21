@@ -126,7 +126,7 @@ function eu4_field_groups_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Unit colors',
-    'weight' => '28',
+    'weight' => '29',
     'children' => array(
       0 => 'field_color1',
       1 => 'field_color2',

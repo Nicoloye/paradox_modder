@@ -30,6 +30,7 @@ features[field_instance][] = node-country-field_color1
 features[field_instance][] = node-country-field_color2
 features[field_instance][] = node-country-field_color3
 features[field_instance][] = node-country-field_country_category
+features[field_instance][] = node-country-field_country_flag
 features[field_instance][] = node-country-field_culture_group_union
 features[field_instance][] = node-country-field_elector
 features[field_instance][] = node-country-field_events
