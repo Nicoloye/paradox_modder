@@ -1,3 +1,11 @@
+.node-type-province .group-left > div{
+  padding-right: 10px;
+}
+
+.node-type-province .group-right > div{
+  padding-left: 10px;
+}
+
 .node-province.node-full {
   float: left;
   padding: 10px;
@@ -21,4 +29,10 @@
   padding: 12px;
   word-break: break-all;
   word-wrap: break-word;
+}
+
+.horizontal-tabs-pane .field-type-list-boolean {
+  float: left;
+  margin: 0 25px 0 0;
+  width: 90px;
 }

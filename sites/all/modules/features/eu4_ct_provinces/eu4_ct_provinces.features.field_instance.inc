@@ -244,7 +244,7 @@ function eu4_ct_provinces_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'entityreference_autocomplete',
-      'weight' => 2,
+      'weight' => 29,
     ),
   );
 
@@ -339,7 +339,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 20,
+      'weight' => 14,
     ),
   );
 
@@ -529,7 +529,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 21,
+      'weight' => 12,
     ),
   );
 
@@ -587,7 +587,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 37,
+      'weight' => 3,
     ),
   );
 
@@ -673,7 +673,7 @@ function eu4_ct_provinces_field_default_field_instances() {
         'size' => 3,
       ),
       'type' => 'text_textfield',
-      'weight' => 1,
+      'weight' => 2,
     ),
   );
 
@@ -756,7 +756,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 34,
+      'weight' => 24,
     ),
   );
 
@@ -845,7 +845,7 @@ function eu4_ct_provinces_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'entityreference_autocomplete',
-      'weight' => 4,
+      'weight' => 31,
     ),
   );
 
@@ -928,7 +928,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 29,
+      'weight' => 20,
     ),
   );
 
@@ -1013,7 +1013,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 5,
+      'weight' => 15,
     ),
   );
 
@@ -1102,7 +1102,7 @@ function eu4_ct_provinces_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'entityreference_autocomplete',
-      'weight' => 19,
+      'weight' => 32,
     ),
   );
 
@@ -1185,7 +1185,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 33,
+      'weight' => 23,
     ),
   );
 
@@ -1280,7 +1280,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 25,
+      'weight' => 15,
     ),
   );
 
@@ -1363,7 +1363,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 11,
+      'weight' => 12,
     ),
   );
 
@@ -1446,7 +1446,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 12,
+      'weight' => 13,
     ),
   );
 
@@ -1529,7 +1529,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 13,
+      'weight' => 14,
     ),
   );
 
@@ -1612,7 +1612,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 7,
+      'weight' => 33,
     ),
   );
 
@@ -1695,7 +1695,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 15,
+      'weight' => 13,
     ),
   );
 
@@ -1790,7 +1790,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 10,
+      'weight' => 14,
     ),
   );
 
@@ -1873,7 +1873,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 18,
+      'weight' => 17,
     ),
   );
 
@@ -1933,7 +1933,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 41,
+      'weight' => 5,
     ),
   );
 
@@ -2028,7 +2028,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 23,
+      'weight' => 17,
     ),
   );
 
@@ -2123,7 +2123,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 24,
+      'weight' => 18,
     ),
   );
 
@@ -2218,7 +2218,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 22,
+      'weight' => 16,
     ),
   );
 
@@ -2307,7 +2307,7 @@ function eu4_ct_provinces_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'entityreference_autocomplete',
-      'weight' => 3,
+      'weight' => 30,
     ),
   );
 
@@ -2393,7 +2393,7 @@ function eu4_ct_provinces_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 14,
+      'weight' => 11,
     ),
   );
 
@@ -2451,7 +2451,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 36,
+      'weight' => 28,
     ),
   );
 
@@ -2519,7 +2519,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_embed',
-      'weight' => 40,
+      'weight' => 4,
     ),
   );
 
@@ -2604,7 +2604,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 6,
+      'weight' => 16,
     ),
   );
 
@@ -2699,7 +2699,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 27,
+      'weight' => 16,
     ),
   );
 
@@ -2782,7 +2782,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 28,
+      'weight' => 19,
     ),
   );
 
@@ -2865,7 +2865,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 31,
+      'weight' => 21,
     ),
   );
 
@@ -2948,7 +2948,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 16,
+      'weight' => 15,
     ),
   );
 
@@ -3031,7 +3031,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 35,
+      'weight' => 25,
     ),
   );
 
@@ -3114,7 +3114,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 32,
+      'weight' => 22,
     ),
   );
 
@@ -3288,7 +3288,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 38,
+      'weight' => 10,
     ),
   );
 
@@ -3329,7 +3329,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 39,
+      'weight' => 11,
     ),
   );
 
@@ -3412,7 +3412,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 26,
+      'weight' => 18,
     ),
   );
 
@@ -3507,7 +3507,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 30,
+      'weight' => 17,
     ),
   );
 
@@ -3590,7 +3590,7 @@ function eu4_ct_provinces_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 17,
+      'weight' => 16,
     ),
   );
 

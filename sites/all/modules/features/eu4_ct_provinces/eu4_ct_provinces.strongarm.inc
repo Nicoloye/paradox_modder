@@ -114,7 +114,7 @@ function eu4_ct_provinces_strongarm() {
     'extra_fields' => array(
       'form' => array(
         'title' => array(
-          'weight' => '0',
+          'weight' => '1',
         ),
       ),
       'display' => array(),
